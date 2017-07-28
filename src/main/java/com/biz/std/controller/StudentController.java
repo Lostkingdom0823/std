@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.biz.std.model.Student;
 import com.biz.std.service.DeleteService;
@@ -54,12 +55,14 @@ public class StudentController {
 	}
 	
 	@RequestMapping("/update")
-	public void doUpdate(){
-		
+	public String doUpdate(@RequestParam("stuId") String stuId,Student student){
+		updateService.doUpdate(stuId, student);
+		return "home";
 	}
 	
 	@RequestMapping("/delete")
-	public void doDelete(){
-		
+	public String doDelete(@RequestParam("stuId") String stuId){
+		deleteService.doDelete(stuId);
+		return "home";
 	}
 }

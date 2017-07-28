@@ -6,8 +6,6 @@ import org.springframework.stereotype.Component;
 import com.biz.std.model.Student;
 import com.biz.std.util.RedisConnector;
 
-import redis.clients.jedis.Jedis;
-
 @Component
 public class InsertDAO {
 	
