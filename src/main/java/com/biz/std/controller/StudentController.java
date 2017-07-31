@@ -65,4 +65,11 @@ public class StudentController {
 		deleteService.doDelete(stuId);
 		return "home";
 	}
+	
+	@RequestMapping("/getinfo")
+	public String doGetInfo(@RequestParam("contentPage") int contentPage){
+		getInfoService.doGetInfo(contentPage);
+		return null;
+		
+	}
 }
