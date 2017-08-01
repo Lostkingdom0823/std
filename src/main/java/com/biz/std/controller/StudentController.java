@@ -20,8 +20,6 @@ public class StudentController {
 	
 	@RequestMapping(value="/insert.do",method=RequestMethod.GET)
 	public String doInsert(HttpServletRequest request){
-		System.out.println("我们进Insert了");
-		// TODO: 2017/8/1  develop this part,add service and methods
 		Student student = null;
 		studentService.insertStudentInfo(student);
 		return "home";
@@ -34,8 +32,7 @@ public class StudentController {
 	}
 	
 	@RequestMapping("/delete.do")
-	public String doDelete(@RequestParam("studentId") String studentId){
-		Student student = null;
+	public String doDelete(Student student){
 		studentService.deleteStudentInfo(student);
 		return "home";
 	}
