@@ -1,17 +1,12 @@
 package com.biz.std.model;
 
 import java.sql.Date;
+import javax.persistence.*;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-
-@Entity(name="student")
+@Entity
+@Table(name="student")
 public class Student {
-		
-	private Integer id;
+
 	private String studentId;
 	private String studentName;
 	private String studentSex;
@@ -20,15 +15,7 @@ public class Student {
 	private Integer studentSujectsInLearning;
 	private Float studentAvgScore;
 	//private Image studentImage;
-	
-	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	public Integer getId() {
-		return id;
-	}
-	public void setId(Integer id) {
-		this.id = id;
-	}
+
 	@Column(length=10)
 	public String getStudentClass() {
 		return studentClass;
@@ -43,13 +30,15 @@ public class Student {
 	public void setStudentSujectsInLearning(Integer studentSujectsInLearning) {
 		this.studentSujectsInLearning = studentSujectsInLearning;
 	}
+	@Column(nullable = false,columnDefinition = "float default 0.0")
 	public Float getStudentAvgScore() {
 		return studentAvgScore;
 	}
 	public void setStudentAvgScore(float studentAvgScore) {
 		this.studentAvgScore = studentAvgScore;
 	}
-	@Column(length=40,nullable=false)
+	@Id
+	@Column(length=40)
 	public String getStudentId() {
 		return studentId;
 	}
@@ -76,4 +65,18 @@ public class Student {
 	public void setStudentBirthday(Date studentBirthday) {
 		this.studentBirthday = studentBirthday;
 	}
+
+	public Student(){
+
+    }
+
+    public  Student(String studentId,String studentName,String studentClass,Date studentBirthday,String studentSex,Integer studentSujectsInLearning,Float studentAvgScore){
+	    this.studentId = studentId;
+	    this.studentName = studentName;
+	    this.studentClass = studentClass;
+	    this.studentBirthday = studentBirthday;
+	    this.studentSex = studentSex;
+	    this.studentSujectsInLearning = studentSujectsInLearning;
+	    this.studentAvgScore = studentAvgScore;
+    }
 }
