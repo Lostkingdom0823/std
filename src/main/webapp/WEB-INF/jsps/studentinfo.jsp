@@ -1,13 +1,17 @@
 <%@ page import="java.util.List" %>
 <%@ page import="com.biz.std.model.Student" %>
-<%@ page import="java.util.Iterator" %><%--
+<%@ page import="java.util.Iterator" %>
+<%@ page import="java.util.ArrayList" %>
+<%--
   Created by IntelliJ IDEA.
   User: King
   Date: 2017/8/2
   Time: 10:44
   To change this template use File | Settings | File Templates.
 --%>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+
+<%@page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
@@ -37,7 +41,7 @@
 </head>
 <body class="no-skin">
 <%!
-    List<Student> students = null;
+    List<Student> students = new ArrayList<Student>();
     Integer contentPage = 1;
     Integer maxPage = 1;
     Integer count = 0;
@@ -404,31 +408,35 @@
                                     </tr>
                                     </thead>
                                     <tbody>
+                                    <%--<%
+                                        Student student = ((List<Student>)request.getAttribute("students")).get(0);
+                                    %>
+                                    <p><%=student.getStudentId()%></p>--%>
                                     <%
-                                        // TODO: 2017/8/2
                                         students.clear();
                                         count=0;
                                         students = (List<Student>) request.getAttribute("students");
-                                        maxPage =(Integer) request.getAttribute("maxPage");
-                                        contentPage=(Integer) request.getAttribute("contentPage");
+                                        students.size();
+                                        //maxPage = (Integer) request.getAttribute("maxPage");
+                                        //contentPage=(Integer) request.getAttribute("contentPage");
                                         Iterator<Student> stuIterator = students.iterator();
                                         while(stuIterator.hasNext()){
                                             count++;
                                             Student student = stuIterator.next();
                                     %>
-                                    <tr>
-                                        <td><%=count%></td>
-                                        <td><%=student.getStudentId()%>></td>
-                                        <td><%=student.getStudentName()%></td>
-                                        <td><%=student.getStudentClass()%></td>
-                                        <td><%=student.getStudentBirthday()%></td>
-                                        <td><%=student.getStudentSex()%></td>
-                                        <td><%=student.getStudentSujectsInLearning()%></td>
-                                        <td><%=student.getStudentAvgScore()%></td>
-                                        <td>
-                                            options
-                                        </td>
-                                    </tr>
+                                        <tr>
+                                            <td><%=count%></td>
+                                            <td><%=student.getStudentId()==null ? "":student.getStudentId()%></td>
+                                            <td><%=student.getStudentName()==null ? "":student.getStudentName()%></td>
+                                            <td><%=student.getStudentClass()==null ? "":student.getStudentClass()%></td>
+                                            <td><%=student.getStudentBirthday()==null ? "":student.getStudentBirthday().getYear()%></td>
+                                            <td><%=student.getStudentSex()==null ? "":student.getStudentSex()%></td>
+                                            <td><%=student.getStudentSujectsInLearning()==null ? "":student.getStudentSujectsInLearning()%></td>
+                                            <td><%=student.getStudentAvgScore()==null ? "":student.getStudentAvgScore()%></td>
+                                            <td>
+                                                options
+                                            </td>
+                                        </tr>
                                     <%
                                         }
                                     %>

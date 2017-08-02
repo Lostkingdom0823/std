@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 @Service
@@ -39,7 +41,7 @@ public class StudentService {
     public ModelContainer getStudentsInfo(Integer contentPage, Integer size){
         // TODO: 2017/8/1 wait for complete
         ModelContainer modelContainer = new ModelContainer();
-        List<Student> students = null;
+        List<Student> students = new ArrayList<Student>();
         if(contentPage==null){
             contentPage=1;
         }
@@ -53,7 +55,7 @@ public class StudentService {
             System.out.println(student.getStudentId()+" ");
         }*/
 
-        students = page.getContent();
+        students.addAll(page.getContent());
         modelContainer.setStudents(students);
         modelContainer.setMaxPage(page.getTotalPages());
         modelContainer.setContentPage(contentPage);
