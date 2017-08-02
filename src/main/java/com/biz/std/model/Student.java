@@ -79,4 +79,17 @@ public class Student {
 	    this.studentSujectsInLearning = studentSujectsInLearning;
 	    this.studentAvgScore = studentAvgScore;
     }
+
+	@Override
+	public String toString() {
+		return "Student{" +
+				"studentId='" + studentId + '\'' +
+				", studentName='" + studentName + '\'' +
+				", studentSex='" + studentSex + '\'' +
+				", studentBirthday=" + studentBirthday +
+				", studentClass='" + studentClass + '\'' +
+				", studentSujectsInLearning=" + studentSujectsInLearning +
+				", studentAvgScore=" + studentAvgScore +
+				'}';
+	}
 }

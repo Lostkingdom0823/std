@@ -30,12 +30,31 @@ public class Subject {
     public void setNumberOfStudents(Integer numberOfStudents) {
         this.numberOfStudents = numberOfStudents;
     }
-    @Column(columnDefinition = "int default 0.0 notnull")
+    @Column(columnDefinition = "float default 0.0 notnull")
     public Float getSubjectAvgScore() {
         return subjectAvgScore;
     }
 
     public void setSubjectAvgScore(Float subjectAvgScore) {
         this.subjectAvgScore = subjectAvgScore;
+    }
+
+    public Subject(){
+
+    }
+
+    public Subject(String subjectName,Integer numberOfStudents,Float subjectAvgScore){
+        this.numberOfStudents = numberOfStudents;
+        this.subjectAvgScore = subjectAvgScore;
+        this.subjectName = subjectName;
+    }
+
+    @Override
+    public String toString() {
+        return "Subject{" +
+                "subjectName='" + subjectName + '\'' +
+                ", numberOfStudents=" + numberOfStudents +
+                ", subjectAvgScore=" + subjectAvgScore +
+                '}';
     }
 }

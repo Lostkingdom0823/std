@@ -10,7 +10,7 @@ import javax.persistence.Table;
 public class Grade {
 
     private String className;
-    private Integer studentsNumber;
+    private Integer numberOfStudents;
     private Float classAvgScore;
 
     @Id
@@ -25,12 +25,12 @@ public class Grade {
     }
 
     @Column(columnDefinition = "int default 0 not null")
-    public Integer getStudentsNumber() {
-        return studentsNumber;
+    public Integer getNumberOfStudents() {
+        return numberOfStudents;
     }
 
-    public void setStudentsNumber(Integer studentsNumber) {
-        this.studentsNumber = studentsNumber;
+    public void setNumberOfStudents(Integer numberOfStudents) {
+        this.numberOfStudents = numberOfStudents;
     }
     @Column(columnDefinition = "float default 0.0 not null")
     public Float getClassAvgScore() {
@@ -45,9 +45,18 @@ public class Grade {
 
     }
 
-    public Grade(String className,Integer studentsNumber,Float classAvgScore){
+    public Grade(String className, Integer numberOfStudents, Float classAvgScore){
         this.className = className;
-        this.studentsNumber = studentsNumber;
+        this.numberOfStudents = numberOfStudents;
         this.classAvgScore = classAvgScore;
+    }
+
+    @Override
+    public String toString() {
+        return "Grade{" +
+                "className='" + className + '\'' +
+                ", numberOfStudents=" + numberOfStudents +
+                ", classAvgScore=" + classAvgScore +
+                '}';
     }
 }

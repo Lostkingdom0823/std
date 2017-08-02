@@ -4,12 +4,16 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.biz.std.model.Student;
 import com.biz.std.service.StudentService;
+import com.biz.std.vo.ModelContainer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
+
+import java.util.List;
 
 @Controller
 @RequestMapping("/student")
@@ -37,9 +41,17 @@ public class StudentController {
 		return "home";
 	}
 	
-	@RequestMapping("/getinfo")
-	public String doGetInfo(@RequestParam("contentPage") int contentPage){
-		return null;
-		
+	@RequestMapping("/getinfo.do")
+	public ModelAndView doGetInfo(Integer contentPage){
+		ModelAndView mav = new ModelAndView();
+		mav.setViewName("studentinfo");
+		Integer size = 10;
+		Integer maxPage=1;
+		ModelContainer modelContainer = studentService.getStudentsInfo(contentPage,size);
+		maxPage=modelContainer.getMaxPage();
+		mav.addObject("students",modelContainer.getStudents());
+		mav.addObject("contentPage",contentPage);
+		mav.addObject("maxPage",maxPage);
+		return mav;
 	}
 }
