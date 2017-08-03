@@ -11,7 +11,7 @@
 --%>
 
 <%@page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html>
 <html>
 <head>
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
@@ -26,6 +26,8 @@
     <!-- page specific plugin styles -->
     <link rel="stylesheet" href="assets/css/jquery-ui.custom.min.css"/>
     <link rel="stylesheet" href="assets/css/chosen.min.css"/>
+	<link rel="stylesheet" href="assets/css/jquery.gritter.min.css" />
+	<link rel="stylesheet" href="assets/css/select2.min.css" />
     <link rel="stylesheet" href="assets/css/bootstrap-datepicker3.min.css"/>
     <link rel="stylesheet" href="assets/css/bootstrap-timepicker.min.css"/>
     <link rel="stylesheet" href="assets/css/daterangepicker.min.css"/>
@@ -36,7 +38,8 @@
     <link rel="stylesheet" href="assets/css/fonts.googleapis.com.css"/>
 
     <!-- ace styles -->
-    <link rel="stylesheet" href="assets/css/ace.min.css" class="ace-main-stylesheet" id="main-ace-style"/>
+    <link rel="stylesheet" href="assets/css/ace.min.css" class="ace-main-stylesheet" id="main-ace-style" />
+    <script src="assets/js/ace-extra.min.js"></script>
     <title>student infomation management page</title>
 </head>
 <body class="no-skin">
@@ -231,7 +234,7 @@
                             <ul class="dropdown-menu dropdown-navbar">
                                 <li>
                                     <a href="#" class="clearfix">
-                                        <img src="assets/images/avatars/avatar.png" class="msg-photo"
+                                        <img src="../assets/images/avatars/avatar.png" class="msg-photo"
                                              alt="Alex's Avatar"/>
                                         <span class="msg-body">
 													<span class="msg-title">
@@ -249,7 +252,7 @@
 
                                 <li>
                                     <a href="#" class="clearfix">
-                                        <img src="assets/images/avatars/avatar3.png" class="msg-photo"
+                                        <img src="../assets/images/avatars/avatar3.png" class="msg-photo"
                                              alt="Susan's Avatar"/>
                                         <span class="msg-body">
 													<span class="msg-title">
@@ -267,7 +270,7 @@
 
                                 <li>
                                     <a href="#" class="clearfix">
-                                        <img src="assets/images/avatars/avatar4.png" class="msg-photo"
+                                        <img src="../assets/images/avatars/avatar4.png" class="msg-photo"
                                              alt="Bob's Avatar"/>
                                         <span class="msg-body">
 													<span class="msg-title">
@@ -285,7 +288,7 @@
 
                                 <li>
                                     <a href="#" class="clearfix">
-                                        <img src="assets/images/avatars/avatar2.png" class="msg-photo"
+                                        <img src="../assets/images/avatars/avatar2.png" class="msg-photo"
                                              alt="Kate's Avatar"/>
                                         <span class="msg-body">
 													<span class="msg-title">
@@ -303,7 +306,7 @@
 
                                 <li>
                                     <a href="#" class="clearfix">
-                                        <img src="assets/images/avatars/avatar5.png" class="msg-photo"
+                                        <img src="../assets/images/avatars/avatar5.png" class="msg-photo"
                                              alt="Fred's Avatar"/>
                                         <span class="msg-body">
 													<span class="msg-title">
@@ -332,7 +335,7 @@
 
                 <li class="light-blue dropdown-modal">
                     <a data-toggle="dropdown" href="#" class="dropdown-toggle">
-                        <img class="nav-user-photo" src="assets/images/avatars/user.jpg" alt="Jason's Photo"/>
+                        <img class="nav-user-photo" src="../assets/images/avatars/user.jpg" alt="Jason's Photo"/>
                         <span class="user-info">
 									<small>Welcome,</small>
 									Jason
@@ -378,7 +381,7 @@
     <div class="main-content">
         <div class="main-content-inner">
             <div class="breadcrumbs ace-save-state" id="breadcrumbs"></div>
-            <div class="page-content">
+            <div class="page-content" id="infoContent">
                 <div class="page-header">
                     <h1>
                         Tables
@@ -388,6 +391,8 @@
                         </small>
                     </h1>
                 </div><!-- /.page-header -->
+                <button class="btn btn-primary btn-lg right pull-right" id="newInfo">
+                    <i class="ace-icon fa fa-pencil align-left bigger-110"></i>new info</button>
                 <div class="row">
                     <div class="col-xs-12">
                         <!-- PAGE CONTENT BEGINS -->
@@ -408,17 +413,13 @@
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    <%--<%
-                                        Student student = ((List<Student>)request.getAttribute("students")).get(0);
-                                    %>
-                                    <p><%=student.getStudentId()%></p>--%>
                                     <%
                                         students.clear();
                                         count=0;
                                         students = (List<Student>) request.getAttribute("students");
                                         students.size();
-                                        //maxPage = (Integer) request.getAttribute("maxPage");
-                                        //contentPage=(Integer) request.getAttribute("contentPage");
+                                        maxPage = (Integer) request.getAttribute("maxPage");
+                                        contentPage=(Integer) request.getAttribute("contentPage");
                                         Iterator<Student> stuIterator = students.iterator();
                                         while(stuIterator.hasNext()){
                                             count++;
@@ -429,12 +430,46 @@
                                             <td><%=student.getStudentId()==null ? "":student.getStudentId()%></td>
                                             <td><%=student.getStudentName()==null ? "":student.getStudentName()%></td>
                                             <td><%=student.getStudentClass()==null ? "":student.getStudentClass()%></td>
-                                            <td><%=student.getStudentBirthday()==null ? "":student.getStudentBirthday().getYear()%></td>
+                                            <td><%=student.getStudentBirthday()==null ? "":student.getStudentBirthday().toString()%></td>
                                             <td><%=student.getStudentSex()==null ? "":student.getStudentSex()%></td>
                                             <td><%=student.getStudentSujectsInLearning()==null ? "":student.getStudentSujectsInLearning()%></td>
                                             <td><%=student.getStudentAvgScore()==null ? "":student.getStudentAvgScore()%></td>
                                             <td>
-                                                options
+                                                <div class="hidden-sm hidden-xs btn-group">
+                                                    <button class="btn btn-xs btn-info">
+                                                        <i class="ace-icon fa fa-pencil bigger-120"></i>
+                                                    </button>
+
+                                                    <button class="btn btn-xs btn-danger">
+                                                        <i class="ace-icon fa fa-trash-o bigger-120"></i>
+                                                    </button>
+                                                </div>
+
+                                                <div class="hidden-md hidden-lg">
+                                                    <div class="inline pos-rel">
+                                                            <button class="btn btn-minier btn-primary dropdown-toggle" data-toggle="dropdown" data-position="auto">
+                                                                <i class="ace-icon fa fa-cog icon-only bigger-110"></i>
+                                                            </button>
+
+                                                            <ul class="dropdown-menu dropdown-only-icon dropdown-yellow dropdown-menu-right dropdown-caret dropdown-close">
+                                                                <li>
+                                                                    <a href="#" class="tooltip-success" data-rel="tooltip" title="Edit">
+                                                                                <span class="green">
+                                                                                    <i class="ace-icon fa fa-pencil-square-o bigger-120"></i>
+                                                                                </span>
+                                                                    </a>
+                                                                </li>
+
+                                                                <li>
+                                                                    <a href="#" class="tooltip-error" data-rel="tooltip" title="Delete">
+                                                                                <span class="red">
+                                                                                    <i class="ace-icon fa fa-trash-o bigger-120"></i>
+                                                                                </span>
+                                                                    </a>
+                                                                </li>
+                                                            </ul>
+                                                    </div>
+                                                </div>
                                             </td>
                                         </tr>
                                     <%
@@ -447,8 +482,152 @@
                     </div>
                 </div>
             </div>
-        </div>
+			<div class="page-content" id="formContent" style="display:none">
+				<div class="page-header">
+                    <h1>
+                        Form
+                        <small>
+                            <i class="ace-icon fa fa-angle-double-right"></i>
+                            Static &amp; Dynamic Tables
+                        </small>
+                    </h1>
+                </div><!-- /.page-header -->
+				<div class="row">
+					<form class="form-horizontal" role="form" action="http://localhost:8585/std/student/insert.do" method="post">
+						<div class="form-group">
+							<label class="col-sm-3 control-label no-padding-right" for="studentId"> Student id </label>
+
+							<div class="col-sm-9">
+								<input type="text" id="studentId" name="studentId" placeholder="Student id" class="col-xs-10 col-sm-5" />
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label no-padding-right" for="studentName"> Student name </label>
+
+							<div class="col-sm-9">
+								<input type="text" id="studentName" name="studentName" placeholder="Student name" class="col-xs-10 col-sm-5" />
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label no-padding-right" for="studentClass"> Student class </label>
+
+							<div class="col-sm-9">
+								<input type="text" id="studentClass" name="studentClass" placeholder="" class="col-xs-10 col-sm-5" />
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label no-padding-right" for="studentBirthday"> Student birthday </label>
+
+							<div class="col-sm-9">
+								<div class="input-medium">
+									<div class="input-group">
+										<input class="input-medium date-picker form-control" name="studentBirthday" id="studentBirthday" type="text" data-date-format="yyyy-mm-dd" placeholder="yyyy-mm-dd" />
+										<span class="input-group-addon">
+											<i class="ace-icon fa fa-calendar"></i>
+										</span>
+									</div>
+								</div>
+							</div>
+
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label no-padding-right" for="studentSex"> Student gender </label>
+							<!-- !!! -->
+							<div class="col-sm-9">
+								<label class="inline">
+									<input name="studentSex" type="radio" class="ace" value="Male" />
+									<span class="lbl middle"> Male</span>
+								</label>
+
+								&nbsp; &nbsp; &nbsp;
+								<label class="inline">
+									<input name="studentSex" type="radio" class="ace" value="Female"/>
+									<span class="lbl middle"> Female</span>
+								</label>
+							</div>
+
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label no-padding-right" for="studentAvgScore"> Student avarage score </label>
+
+							<div class="col-sm-9">
+								<input type="text" id="studentAvgScore" name="studentAvgScore" placeholder="0.0" class="col-xs-10 col-sm-5" />
+							</div>
+						</div>
+						<div class="clearfix form-actions">
+							<div class="col-md-offset-3 col-md-9">
+								<button class="btn btn-info" type="submit">
+									<i class="ace-icon fa fa-check bigger-110"></i>
+									Submit
+								</button>
+
+								&nbsp; &nbsp; &nbsp;
+								<button class="btn" type="reset">
+									<i class="ace-icon fa fa-undo bigger-110"></i>
+									Reset
+								</button>
+								
+								&nbsp; &nbsp; &nbsp;
+								<button class="btn btn-warning" type="reset" id="return">
+									<i class="ace-icon fa fa-backward bigger-110"></i>
+									Back
+								</button>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
     </div>
 </div>
+<script src="assets/js/jquery-2.1.4.min.js"></script>
+<script type="text/javascript">
+    if('ontouchstart' in document.documentElement) document.write("<script src='assets/js/jquery.mobile.custom.min.js'>"+"<"+"/script>");
+</script>
+<script src="assets/js/bootstrap.min.js"></script>
+
+<!-- page specific plugin scripts -->
+<script src="assets/js/jquery-ui.custom.min.js"></script>
+<script src="assets/js/jquery.ui.touch-punch.min.js"></script>
+<script src="assets/js/chosen.jquery.min.js"></script>
+<script src="assets/js/spinbox.min.js"></script>
+<script src="assets/js/bootstrap-datepicker.min.js"></script>
+<script src="assets/js/bootstrap-timepicker.min.js"></script>
+<script src="assets/js/moment.min.js"></script>
+<script src="assets/js/daterangepicker.min.js"></script>
+<script src="assets/js/bootstrap-datetimepicker.min.js"></script>
+<script src="assets/js/bootstrap-colorpicker.min.js"></script>
+<script src="assets/js/jquery.knob.min.js"></script>
+<script src="assets/js/autosize.min.js"></script>
+<script src="assets/js/jquery.inputlimiter.min.js"></script>
+<script src="assets/js/jquery.maskedinput.min.js"></script>
+<script src="assets/js/bootstrap-tag.min.js"></script>
+
+<!-- ace scripts -->
+<script src="assets/js/ace-elements.min.js"></script>
+<script src="assets/js/ace.min.js"></script>
+<script type="text/javascript">
+	$("#newInfo").click(function(){
+		$("#infoContent").hide();
+		$("#formContent").show();
+	});
+	
+	$("#return").click(function(){
+		$("#infoContent").show();
+		$("#formContent").hide();
+	});
+	
+	jQuery(function($) {
+	$('.input-daterange').datepicker({autoclose:true,format: 'yyyy-mm-dd'});  
+	$('.date-picker').datepicker({
+			autoclose: true,
+			todayHighlight: true
+		})
+		//show datepicker when clicking on the icon
+		.next().on(ace.click_event, function(){
+			$(this).prev().focus();
+		});
+	});
+</script>
 </body>
 </html>

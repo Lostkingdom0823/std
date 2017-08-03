@@ -18,9 +18,9 @@ public class StudentController {
 	@Autowired
 	private StudentService studentService;
 	
-	@RequestMapping(value="/insert.do",method=RequestMethod.GET)
-	public String doInsert(HttpServletRequest request){
-		Student student = null;
+	@RequestMapping(value="/insert.do")
+	public String doInsert(Student student){
+		System.out.println(student.getStudentBirthday());
 		studentService.insertStudentInfo(student);
 		return "home";
 	}
@@ -44,6 +44,7 @@ public class StudentController {
 		Integer size = 10;
 		Integer maxPage=1;
 		ModelContainer modelContainer = studentService.getStudentsInfo(contentPage,size);
+		System.out.println(modelContainer.getStudents().get(4).getStudentBirthday());
 		maxPage=modelContainer.getMaxPage();
 		mav.addObject("students",modelContainer.getStudents());
 		mav.addObject("contentPage",contentPage);
