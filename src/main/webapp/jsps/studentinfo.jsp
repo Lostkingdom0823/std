@@ -436,7 +436,7 @@
                                             <td><%=student.getStudentAvgScore()==null ? "":student.getStudentAvgScore()%></td>
                                             <td>
                                                 <div class="hidden-sm hidden-xs btn-group">
-                                                    <button class="btn btn-xs btn-info">
+                                                    <button class="btn btn-xs btn-info" >
                                                         <i class="ace-icon fa fa-pencil bigger-120"></i>
                                                     </button>
 
@@ -493,7 +493,7 @@
                     </h1>
                 </div><!-- /.page-header -->
 				<div class="row">
-					<form class="form-horizontal" role="form" action="http://localhost:8585/std/student/insert.do" method="post">
+					<form class="form-horizontal" id="form" role="form" action="http://localhost:8585/std/student/insert.do" method="post">
 						<div class="form-group">
 							<label class="col-sm-3 control-label no-padding-right" for="studentId"> Student id </label>
 
@@ -610,12 +610,28 @@
 	$("#newInfo").click(function(){
 		$("#infoContent").hide();
 		$("#formContent").show();
+		$("#form").attr("action","http://localhost:8585/std/student/insert.do");
 	});
 	
 	$("#return").click(function(){
 		$("#infoContent").show();
 		$("#formContent").hide();
 	});
+
+	$(".btn-info").click(function(){
+	    var $student = $(this).parent().parent().parent().find('td');
+	    alert($student);
+        $("#infoContent").hide();
+        $("#formContent").show();
+        $("#studentId").val($student.eq(1).val());
+        $("#studentId").attr("readonly","readonly");
+        $("#studentName").val($student.eq(2).val());
+        $("#studentClass").val($student.eq(3).val());
+        $("#studentSex").val($student.eq(5).val());
+        $("#studentBirthday").val($student.eq(4).val());
+        $("#studentAvgScore").val($student.eq(7).val());
+        $("#form").attr("action","http://localhost:8585/std/student/update.do");
+    });
 	
 	jQuery(function($) {
 	$('.input-daterange').datepicker({autoclose:true,format: 'yyyy-mm-dd'});  

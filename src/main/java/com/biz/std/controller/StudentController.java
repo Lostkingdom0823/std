@@ -20,7 +20,6 @@ public class StudentController {
 	
 	@RequestMapping(value="/insert.do")
 	public String doInsert(Student student){
-		System.out.println(student.getStudentBirthday());
 		studentService.insertStudentInfo(student);
 		return "home";
 	}
