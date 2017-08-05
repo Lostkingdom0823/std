@@ -1,4 +1,8 @@
 package com.biz.std.vo;
 
-public class SubjectInfo {
+import org.springframework.stereotype.Component;
+import org.springframework.web.servlet.ModelAndView;
+
+@Component
+public class SubjectInfo extends ModelAndView{
 }

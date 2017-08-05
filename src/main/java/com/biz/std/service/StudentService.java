@@ -2,18 +2,16 @@ package com.biz.std.service;
 
 import com.biz.std.model.Student;
 import com.biz.std.repository.StudentPagingAndSortingRepository;
-import com.biz.std.vo.ModelContainer;
+import com.biz.std.vo.StudentInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-
+import org.springframework.web.servlet.ModelAndView;
 import javax.transaction.Transactional;
-import java.awt.*;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 @Service
@@ -21,6 +19,9 @@ public class StudentService {
 
     @Autowired
     private StudentPagingAndSortingRepository studentPagingAndSortingRepository;
+
+    @Autowired
+    private StudentInfo studentInfo;
 
     @Transactional
     public void insertStudentInfo(Student student){
@@ -33,14 +34,11 @@ public class StudentService {
     }
 
     @Transactional
-    public void deleteStudentInfo(Student student){
-        studentPagingAndSortingRepository.delete(student.getStudentId());
-
+    public void deleteStudentInfo(String studentId){
+        studentPagingAndSortingRepository.delete(studentId);
     }
 
-    public ModelContainer getStudentsInfo(Integer contentPage, Integer size){
-        // TODO: 2017/8/1 wait for complete
-        ModelContainer modelContainer = new ModelContainer();
+    public ModelAndView getStudentsInfo(Integer contentPage, Integer size){
         List<Student> students = new ArrayList<Student>();
         if(contentPage==null){
             contentPage=1;
@@ -50,16 +48,14 @@ public class StudentService {
         Pageable pageable = new PageRequest(contentPage-1,size,sort);
         Page<Student> page = studentPagingAndSortingRepository.findAll(pageable);
 
-        /*System.out.println(page.getTotalElements()+"    "+page.getTotalPages()+"    "+page.getNumber()+"    "+page.getNumberOfElements());
-        for (Student student : page.getContent()){
-            System.out.println(student.getStudentId()+" ");
-        }*/
-
+        studentInfo.clear();
         students.addAll(page.getContent());
-        modelContainer.setStudents(students);
-        modelContainer.setMaxPage(page.getTotalPages());
-        modelContainer.setContentPage(contentPage);
+        studentInfo.setViewName("studentinfo");
+        studentInfo.addObject("students",students);
+        studentInfo.addObject("contentPage",contentPage);
+        studentInfo.addObject("maxPage",page.getTotalPages());
+        studentInfo.addObject("totalDetails",(int)page.getTotalElements());
 
-        return modelContainer;
+        return studentInfo;
     }
 }

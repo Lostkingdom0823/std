@@ -2,6 +2,7 @@
 <%@ page import="com.biz.std.model.Student" %>
 <%@ page import="java.util.Iterator" %>
 <%@ page import="java.util.ArrayList" %>
+<%@ page import="com.biz.std.model.Grade" %>
 <%--
   Created by IntelliJ IDEA.
   User: King
@@ -26,8 +27,8 @@
     <!-- page specific plugin styles -->
     <link rel="stylesheet" href="assets/css/jquery-ui.custom.min.css"/>
     <link rel="stylesheet" href="assets/css/chosen.min.css"/>
-	<link rel="stylesheet" href="assets/css/jquery.gritter.min.css" />
-	<link rel="stylesheet" href="assets/css/select2.min.css" />
+    <link rel="stylesheet" href="assets/css/jquery.gritter.min.css" />
+    <link rel="stylesheet" href="assets/css/select2.min.css" />
     <link rel="stylesheet" href="assets/css/bootstrap-datepicker3.min.css"/>
     <link rel="stylesheet" href="assets/css/bootstrap-timepicker.min.css"/>
     <link rel="stylesheet" href="assets/css/daterangepicker.min.css"/>
@@ -44,7 +45,7 @@
 </head>
 <body class="no-skin">
 <%!
-    List<Student> students = new ArrayList<Student>();
+    List<Grade> grades = new ArrayList<Grade>();
     Integer contentPage = 1;
     Integer maxPage = 1;
     Integer count = 0;
@@ -434,65 +435,58 @@
                                     </thead>
                                     <tbody>
                                     <%
-                                        students.clear();
+                                        grades.clear();
                                         count=0;
-                                        students = (List<Student>) request.getAttribute("students");
-                                        students.size();
+                                        grades = (List<Grade>) request.getAttribute("grades");
                                         maxPage = (Integer) request.getAttribute("maxPage");
                                         contentPage=(Integer) request.getAttribute("contentPage");
                                         totalDetails=(Integer) request.getAttribute("totalDetails");
-                                        Iterator<Student> stuIterator = students.iterator();
-                                        while(stuIterator.hasNext()){
+                                        Iterator<Grade> gradeIterator = grades.iterator();
+                                        while(gradeIterator.hasNext()){
                                             count++;
-                                            Student student = stuIterator.next();
+                                            Grade grade = gradeIterator.next();
                                     %>
-                                        <tr>
-                                            <td><%=(contentPage-1)*10+count%></td>
-                                            <td><%=student.getStudentId()==null ? "":student.getStudentId()%></td>
-                                            <td><%=student.getStudentName()==null ? "":student.getStudentName()%></td>
-                                            <td><%=student.getStudentClass()==null ? "":student.getStudentClass()%></td>
-                                            <td><%=student.getStudentBirthday()==null ? "":student.getStudentBirthday().toString()%></td>
-                                            <td><%=student.getStudentSex()==null ? "":student.getStudentSex()%></td>
-                                            <td><%=student.getStudentSujectsInLearning()==null ? "":student.getStudentSujectsInLearning()%></td>
-                                            <td><%=student.getStudentAvgScore()==null ? "":student.getStudentAvgScore()%></td>
-                                            <td>
-                                                <div class="hidden-sm hidden-xs btn-group">
-                                                    <button class="btn btn-xs btn-info" >
-                                                        <i class="ace-icon fa fa-pencil bigger-120"></i>
+                                    <tr>
+                                        <td><%=(contentPage-1)*10+count%></td>
+                                        <!-- todo   -->
+                                        <td>
+                                            <div class="hidden-sm hidden-xs btn-group">
+                                                <button class="btn btn-xs btn-info" >
+                                                    <i class="ace-icon fa fa-pencil bigger-120"></i>
+                                                </button>
+
+                                                <button class="btn btn-xs btn-danger">
+                                                    <i class="ace-icon fa fa-trash-o bigger-120"></i>
+                                                </button>
+                                            </div>
+
+                                            <div class="hidden-md hidden-lg">
+                                                <div class="inline pos-rel">
+                                                    <button class="btn btn-minier btn-primary dropdown-toggle" data-toggle="dropdown" data-position="auto">
+                                                        <i class="ace-icon fa fa-cog icon-only bigger-110"></i>
                                                     </button>
 
-                                                    <button class="btn btn-xs btn-danger">
-                                                        <i class="ace-icon fa fa-trash-o bigger-120"></i>
-                                                    </button>
-                                                </div>
-
-                                                <div class="hidden-md hidden-lg">
-                                                    <div class="inline pos-rel">
-                                                            <button class="btn btn-minier btn-primary dropdown-toggle" data-toggle="dropdown" data-position="auto">
-                                                                <i class="ace-icon fa fa-cog icon-only bigger-110"></i>
-                                                            </button>
-
-                                                            <ul class="dropdown-menu dropdown-only-icon dropdown-yellow dropdown-menu-right dropdown-caret dropdown-close">
-                                                                <li>
-                                                                    <a href="#" class="tooltip-success" data-rel="tooltip" title="Edit">
+                                                    <ul class="dropdown-menu dropdown-only-icon dropdown-yellow dropdown-menu-right dropdown-caret dropdown-close">
+                                                        <li>
+                                                            <a href="#" class="tooltip-success" data-rel="tooltip" title="Edit">
                                                                                 <span class="green">
                                                                                     <i class="ace-icon fa fa-pencil-square-o bigger-120"></i>
                                                                                 </span>
-                                                                    </a>
-                                                                </li>
+                                                            </a>
+                                                        </li>
 
-                                                                <li>
-                                                                    <a href="#" class="tooltip-error" data-rel="tooltip" title="Delete">
+                                                        <li>
+                                                            <a href="#" class="tooltip-error" data-rel="tooltip" title="Delete">
                                                                                 <span class="red">
                                                                                     <i class="ace-icon fa fa-trash-o bigger-120"></i>
                                                                                 </span>
-                                                                    </a>
-                                                                </li>
-                                                            </ul>
-                                                    </div>
+                                                            </a>
+                                                        </li>
+                                                    </ul>
                                                 </div>
-                                            </td>
-                                        </tr>
+                                            </div>
+                                        </td>
+                                    </tr>
                                     <%
                                         }
                                     %>
@@ -548,8 +542,8 @@
                     </div>
                 </div>
             </div>
-			<div class="page-content" id="formContent" style="display:none">
-				<div class="page-header">
+            <div class="page-content" id="formContent" style="display:none">
+                <div class="page-header">
                     <h1>
                         Form
                         <small>
@@ -558,92 +552,93 @@
                         </small>
                     </h1>
                 </div><!-- /.page-header -->
-				<div class="row">
-					<form class="form-horizontal" id="form" role="form" action="http://localhost:8585/std/student/insert.do" method="post">
-						<div class="form-group">
-							<label class="col-sm-3 control-label no-padding-right" for="studentId"> Student id </label>
+                <div class="row">
+                    <!--todo-->
+                    <form class="form-horizontal" id="form" role="form" action="http://localhost:8585/std/student/insert.do" method="post">
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label no-padding-right" for="studentId"> Student id </label>
 
-							<div class="col-sm-9">
-								<input type="text" id="studentId" name="studentId" placeholder="Student id" class="col-xs-10 col-sm-5" />
-							</div>
-						</div>
-						<div class="form-group">
-							<label class="col-sm-3 control-label no-padding-right" for="studentName"> Student name </label>
+                            <div class="col-sm-9">
+                                <input type="text" id="studentId" name="studentId" placeholder="Student id" class="col-xs-10 col-sm-5" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label no-padding-right" for="studentName"> Student name </label>
 
-							<div class="col-sm-9">
-								<input type="text" id="studentName" name="studentName" placeholder="Student name" class="col-xs-10 col-sm-5" />
-							</div>
-						</div>
-						<div class="form-group">
-							<label class="col-sm-3 control-label no-padding-right" for="studentClass"> Student class </label>
+                            <div class="col-sm-9">
+                                <input type="text" id="studentName" name="studentName" placeholder="Student name" class="col-xs-10 col-sm-5" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label no-padding-right" for="studentClass"> Student class </label>
 
-							<div class="col-sm-9">
-								<input type="text" id="studentClass" name="studentClass" placeholder="" class="col-xs-10 col-sm-5" />
-							</div>
-						</div>
-						<div class="form-group">
-							<label class="col-sm-3 control-label no-padding-right" for="studentBirthday"> Student birthday </label>
+                            <div class="col-sm-9">
+                                <input type="text" id="studentClass" name="studentClass" placeholder="" class="col-xs-10 col-sm-5" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label no-padding-right" for="studentBirthday"> Student birthday </label>
 
-							<div class="col-sm-9">
-								<div class="input-medium">
-									<div class="input-group">
-										<input class="input-medium date-picker form-control" name="studentBirthday" id="studentBirthday" type="text" data-date-format="yyyy-mm-dd" placeholder="yyyy-mm-dd" />
-										<span class="input-group-addon">
+                            <div class="col-sm-9">
+                                <div class="input-medium">
+                                    <div class="input-group">
+                                        <input class="input-medium date-picker form-control" name="studentBirthday" id="studentBirthday" type="text" data-date-format="yyyy-mm-dd" placeholder="yyyy-mm-dd" />
+                                        <span class="input-group-addon">
 											<i class="ace-icon fa fa-calendar"></i>
 										</span>
-									</div>
-								</div>
-							</div>
+                                    </div>
+                                </div>
+                            </div>
 
-						</div>
-						<div class="form-group">
-							<label class="col-sm-3 control-label no-padding-right" for="studentSex"> Student gender </label>
-							<!-- !!! -->
-							<div class="col-sm-9">
-								<label class="inline">
-									<input id="genderMale" name="studentSex" type="radio" class="ace" value="Male" />
-									<span class="lbl middle"> Male</span>
-								</label>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label no-padding-right" for="studentSex"> Student gender </label>
+                            <!-- !!! -->
+                            <div class="col-sm-9">
+                                <label class="inline">
+                                    <input id="genderMale" name="studentSex" type="radio" class="ace" value="Male" />
+                                    <span class="lbl middle"> Male</span>
+                                </label>
 
-								&nbsp; &nbsp; &nbsp;
-								<label class="inline">
-									<input id="genderFemale" name="studentSex" type="radio" class="ace" value="Female"/>
-									<span class="lbl middle"> Female</span>
-								</label>
-							</div>
+                                &nbsp; &nbsp; &nbsp;
+                                <label class="inline">
+                                    <input id="genderFemale" name="studentSex" type="radio" class="ace" value="Female"/>
+                                    <span class="lbl middle"> Female</span>
+                                </label>
+                            </div>
 
-						</div>
-						<div class="form-group">
-							<label class="col-sm-3 control-label no-padding-right" for="studentAvgScore"> Student avarage score </label>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label no-padding-right" for="studentAvgScore"> Student avarage score </label>
 
-							<div class="col-sm-9">
-								<input type="text" id="studentAvgScore" name="studentAvgScore" placeholder="0.0" class="col-xs-10 col-sm-5" />
-							</div>
-						</div>
-						<div class="clearfix form-actions">
-							<div class="col-md-offset-3 col-md-9">
-								<button class="btn btn-primary" type="submit">
-									<i class="ace-icon fa fa-check bigger-110"></i>
-									Submit
-								</button>
+                            <div class="col-sm-9">
+                                <input type="text" id="studentAvgScore" name="studentAvgScore" placeholder="0.0" class="col-xs-10 col-sm-5" />
+                            </div>
+                        </div>
+                        <div class="clearfix form-actions">
+                            <div class="col-md-offset-3 col-md-9">
+                                <button class="btn btn-primary" type="submit">
+                                    <i class="ace-icon fa fa-check bigger-110"></i>
+                                    Submit
+                                </button>
 
-								&nbsp; &nbsp; &nbsp;
-								<button class="btn" type="reset">
-									<i class="ace-icon fa fa-undo bigger-110"></i>
-									Reset
-								</button>
-								
-								&nbsp; &nbsp; &nbsp;
-								<button class="btn btn-warning" type="reset" id="return">
-									<i class="ace-icon fa fa-arrow-left bigger-110"></i>
-									Back
-								</button>
-							</div>
-						</div>
-					</form>
-				</div>
-			</div>
-		</div>
+                                &nbsp; &nbsp; &nbsp;
+                                <button class="btn" type="reset">
+                                    <i class="ace-icon fa fa-undo bigger-110"></i>
+                                    Reset
+                                </button>
+
+                                &nbsp; &nbsp; &nbsp;
+                                <button class="btn btn-warning" type="reset" id="return">
+                                    <i class="ace-icon fa fa-arrow-left bigger-110"></i>
+                                    Back
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 <script src="assets/js/jquery-2.1.4.min.js"></script>
@@ -716,17 +711,17 @@
 
 
 
-	jQuery(function($) {
-	$('.input-daterange').datepicker({autoclose:true,format: 'yyyy-mm-dd'});  
-	$('.date-picker').datepicker({
-			autoclose: true,
-			todayHighlight: true
-		})
-		//show datepicker when clicking on the icon
-		.next().on(ace.click_event, function(){
-			$(this).prev().focus();
-		});
-	});
+    jQuery(function($) {
+        $('.input-daterange').datepicker({autoclose:true,format: 'yyyy-mm-dd'});
+        $('.date-picker').datepicker({
+            autoclose: true,
+            todayHighlight: true
+        })
+        //show datepicker when clicking on the icon
+            .next().on(ace.click_event, function(){
+            $(this).prev().focus();
+        });
+    });
 </script>
 </body>
 </html>

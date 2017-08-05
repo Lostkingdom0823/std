@@ -9,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -19,27 +20,28 @@ public class SubjectController {
     @Autowired
     private SubjectService subjectService;
 
-    @RequestMapping(value="/insert.do",method= RequestMethod.GET)
+    @RequestMapping(value="/insert.do")
     public String doInsert(Subject subject){
         subjectService.insertSubjectInfo(subject);
-        return "home";
+        return "redirect:/subject/getinfo.do";
     }
 
     @RequestMapping("/update.do")
     public String doUpdate(Subject subject){
         subjectService.updateSubjectInfo(subject);
-        return "home";
+        return "redirect:/subject/getinfo.do";
     }
 
     @RequestMapping("/delete.do")
     public String doDelete(Subject subject){
         subjectService.deleteSubjectInfo(subject);
-        return "home";
+        return "redirect:/subject/getinfo.do";
     }
 
-    @RequestMapping("/getinfo")
-    public String doGetInfo(@RequestParam("contentPage") int contentPage){
-        return null;
+    @RequestMapping("/getinfo.do")
+    public ModelAndView doGetInfo(Integer contentPage){
+        int size = 10;
+        return subjectService.getSubjectsInfo(contentPage,size);
 
     }
 

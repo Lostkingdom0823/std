@@ -1,14 +1,10 @@
 package com.biz.std.controller;
 
-import javax.servlet.http.HttpServletRequest;
-
 import com.biz.std.model.Student;
 import com.biz.std.service.StudentService;
-import com.biz.std.vo.ModelContainer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
@@ -21,33 +17,24 @@ public class StudentController {
 	@RequestMapping(value="/insert.do")
 	public String doInsert(Student student){
 		studentService.insertStudentInfo(student);
-		return "home";
+		return "redirect:/student/getinfo.do";
 	}
 
 	@RequestMapping("/update.do")
 	public String doUpdate(Student student){
 		studentService.updateStudentInfo(student);
-		return "home";
+		return "redirect:/student/getinfo.do";
 	}
 	
 	@RequestMapping("/delete.do")
-	public String doDelete(Student student){
-		studentService.deleteStudentInfo(student);
-		return "home";
+	public String doDelete(String studentId){
+		studentService.deleteStudentInfo(studentId);
+		return "redirect:/student/getinfo.do";
 	}
 	
 	@RequestMapping("/getinfo.do")
 	public ModelAndView doGetInfo(Integer contentPage){
-		ModelAndView mav = new ModelAndView();
-		mav.setViewName("studentinfo");
 		Integer size = 10;
-		Integer maxPage=1;
-		ModelContainer modelContainer = studentService.getStudentsInfo(contentPage,size);
-		System.out.println(modelContainer.getStudents().get(4).getStudentBirthday());
-		maxPage=modelContainer.getMaxPage();
-		mav.addObject("students",modelContainer.getStudents());
-		mav.addObject("contentPage",contentPage);
-		mav.addObject("maxPage",maxPage);
-		return mav;
+		return studentService.getStudentsInfo(contentPage,size);
 	}
 }
