@@ -436,7 +436,9 @@
                                     <%
                                         students.clear();
                                         count=0;
+                                        if(request.getAttribute("students")!=null){
                                         students = (List<Student>) request.getAttribute("students");
+                                        }
                                         students.size();
                                         maxPage = (Integer) request.getAttribute("maxPage");
                                         contentPage=(Integer) request.getAttribute("contentPage");
@@ -576,11 +578,31 @@
 						</div>
 						<div class="form-group">
 							<label class="col-sm-3 control-label no-padding-right" for="studentClass"> Student class </label>
-
-							<div class="col-sm-9">
-								<input type="text" id="studentClass" name="studentClass" placeholder="" class="col-xs-10 col-sm-5" />
+                            <span class="col-sm-1 label label-xlg label-white middle " style="margin-right:10px;margin-left:10px;margin-top:4px">Grade</span>
+                            <div class="col-sm-1 no-padding-left">
+                                <select class="form-control " id="grade">
+                                    <option>1</option>
+                                    <option>2</option>
+                                    <option>3</option>
+                                    <option>4</option>
+                                    <option>5</option>
+                                    <option>6</option>
+                                </select>
+                            </div>
+                            <span class="col-sm-1 label label-xlg label-white middle " style="margin-right:10px;margin-top:4px">Class</span>
+                            <div class="col-sm-1 no-padding-left">
+                                <select class="form-control " id="class">
+                                    <option>1</option>
+                                    <option>2</option>
+                                    <option>3</option>
+                                    <option>4</option>
+                                    <option>5</option>
+                                    <option>6</option>
+                                </select>
 							</div>
+                            <input type="hidden" name="studentClass" id="studentClass"/>
 						</div>
+
 						<div class="form-group">
 							<label class="col-sm-3 control-label no-padding-right" for="studentBirthday"> Student birthday </label>
 
@@ -622,7 +644,7 @@
 						</div>
 						<div class="clearfix form-actions">
 							<div class="col-md-offset-3 col-md-9">
-								<button class="btn btn-primary" type="submit">
+								<button class="btn btn-primary" type="submit" id="submit">
 									<i class="ace-icon fa fa-check bigger-110"></i>
 									Submit
 								</button>
@@ -711,6 +733,12 @@
             var timeStamp=new Date().getTime();
             var url = "http://localhost:8585/std/student/getinfo.do?contentPage="+$contentPage+"&timestamp="+timeStamp;
             $(this).attr("href",url);
+        });
+
+        $("#submit").click(function () {
+            var $className="Grade "+$("#grade").val()+" Class "+$("#class").val();
+            $("#studentClass").val($className.toString());
+            submit();
         });
     });
 

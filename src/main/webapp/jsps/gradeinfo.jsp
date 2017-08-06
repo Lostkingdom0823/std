@@ -1,5 +1,4 @@
 <%@ page import="java.util.List" %>
-<%@ page import="com.biz.std.model.Student" %>
 <%@ page import="java.util.Iterator" %>
 <%@ page import="java.util.ArrayList" %>
 <%@ page import="com.biz.std.model.Grade" %>
@@ -423,12 +422,8 @@
                                     <thead>
                                     <tr>
                                         <th>queue</th>
-                                        <th>student id</th>
-                                        <th>student name</th>
-                                        <th>student class</th>
-                                        <th>student birthday</th>
-                                        <th>student sex</th>
-                                        <th>number of subjects</th>
+                                        <th>class name</th>
+                                        <th>number of students</th>
                                         <th>avarage score</th>
                                         <th>optiions</th>
                                     </tr>
@@ -437,18 +432,27 @@
                                     <%
                                         grades.clear();
                                         count=0;
-                                        grades = (List<Grade>) request.getAttribute("grades");
+                                        if(request.getAttribute("grades")!=null) {
+                                            grades = (List<Grade>) request.getAttribute("grades");
+                                        }
                                         maxPage = (Integer) request.getAttribute("maxPage");
                                         contentPage=(Integer) request.getAttribute("contentPage");
                                         totalDetails=(Integer) request.getAttribute("totalDetails");
                                         Iterator<Grade> gradeIterator = grades.iterator();
+                                        %>
+                                    <%
                                         while(gradeIterator.hasNext()){
                                             count++;
                                             Grade grade = gradeIterator.next();
                                     %>
+
                                     <tr>
                                         <td><%=(contentPage-1)*10+count%></td>
                                         <!-- todo   -->
+                                        <td><%=grade.getClassName()==null? "" :grade.getClassName()%></td>
+                                        <td><%=grade.getNumberOfStudents()==null ? "-":grade.getNumberOfStudents()%></td>
+                                        <td><%=grade.getClassAvgScore()==null? "-":grade.getClassAvgScore()%></td>
+                                        <!-- options -->
                                         <td>
                                             <div class="hidden-sm hidden-xs btn-group">
                                                 <button class="btn btn-xs btn-info" >
@@ -492,6 +496,7 @@
                                     %>
                                     </tbody>
                                 </table>
+                                <!-- 分页实现 -->
                                 <div class="row">
                                     <div class="col-xs-6" style="margin-top: 8px">
                                         <div class="dataTables_info" id="dynamic-table_info" role="status" aria-live="polite">showing <%=(contentPage*10-9)%> to <%=(contentPage*10)%> of <%=totalDetails%></div>
@@ -554,70 +559,56 @@
                 </div><!-- /.page-header -->
                 <div class="row">
                     <!--todo-->
-                    <form class="form-horizontal" id="form" role="form" action="http://localhost:8585/std/student/insert.do" method="post">
-                        <div class="form-group">
-                            <label class="col-sm-3 control-label no-padding-right" for="studentId"> Student id </label>
-
+                    <form class="form-horizontal" id="form" role="form" action="http://localhost:8585/std/grade/insert.do" method="post">
+                        <div class="form-group" id="insert">
+                            <label class="col-sm-3 control-label no-padding-right" >Class name</label>
+                            <span class="col-sm-1 label label-xlg label-white middle " style="margin-right:10px;margin-left:10px;margin-top:4px">Grade</span>
+                            <div class="col-sm-1 no-padding-left">
+                                <select class="form-control " id="grade">
+                                    <option>1</option>
+                                    <option>2</option>
+                                    <option>3</option>
+                                    <option>4</option>
+                                    <option>5</option>
+                                    <option>6</option>
+                                </select>
+                            </div>
+                            <span class="col-sm-1 label label-xlg label-white middle " style="margin-right:10px;margin-top:4px">Class</span>
+                            <div class="col-sm-1 no-padding-left">
+                                <select class="form-control " id="class">
+                                    <option>1</option>
+                                    <option>2</option>
+                                    <option>3</option>
+                                    <option>4</option>
+                                    <option>5</option>
+                                    <option>6</option>
+                                </select>
+                            </div>
+                            <input type="hidden" name="className" id="className"/>
+                        </div>
+                        <div class="form-group" id="update">
+                            <label class="col-sm-3 control-label no-padding-right" >Class name</label>
                             <div class="col-sm-9">
-                                <input type="text" id="studentId" name="studentId" placeholder="Student id" class="col-xs-10 col-sm-5" />
+                                <input type="text" id="classNameReadOnly" name="className" placeholder="0" class="col-xs-10 col-sm-5" />
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="col-sm-3 control-label no-padding-right" for="studentName"> Student name </label>
+                            <label class="col-sm-3 control-label no-padding-right">Number of students</label>
 
                             <div class="col-sm-9">
-                                <input type="text" id="studentName" name="studentName" placeholder="Student name" class="col-xs-10 col-sm-5" />
+                                <input type="text" id="numberOfStudents" name="numberOfStudents" placeholder="0" class="col-xs-10 col-sm-5" />
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="col-sm-3 control-label no-padding-right" for="studentClass"> Student class </label>
+                            <label class="col-sm-3 control-label no-padding-right"> Student avarage score </label>
 
                             <div class="col-sm-9">
-                                <input type="text" id="studentClass" name="studentClass" placeholder="" class="col-xs-10 col-sm-5" />
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="col-sm-3 control-label no-padding-right" for="studentBirthday"> Student birthday </label>
-
-                            <div class="col-sm-9">
-                                <div class="input-medium">
-                                    <div class="input-group">
-                                        <input class="input-medium date-picker form-control" name="studentBirthday" id="studentBirthday" type="text" data-date-format="yyyy-mm-dd" placeholder="yyyy-mm-dd" />
-                                        <span class="input-group-addon">
-											<i class="ace-icon fa fa-calendar"></i>
-										</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                        </div>
-                        <div class="form-group">
-                            <label class="col-sm-3 control-label no-padding-right" for="studentSex"> Student gender </label>
-                            <!-- !!! -->
-                            <div class="col-sm-9">
-                                <label class="inline">
-                                    <input id="genderMale" name="studentSex" type="radio" class="ace" value="Male" />
-                                    <span class="lbl middle"> Male</span>
-                                </label>
-
-                                &nbsp; &nbsp; &nbsp;
-                                <label class="inline">
-                                    <input id="genderFemale" name="studentSex" type="radio" class="ace" value="Female"/>
-                                    <span class="lbl middle"> Female</span>
-                                </label>
-                            </div>
-
-                        </div>
-                        <div class="form-group">
-                            <label class="col-sm-3 control-label no-padding-right" for="studentAvgScore"> Student avarage score </label>
-
-                            <div class="col-sm-9">
-                                <input type="text" id="studentAvgScore" name="studentAvgScore" placeholder="0.0" class="col-xs-10 col-sm-5" />
+                                <input type="text" id="classAvgScore" name="classAvgScore" placeholder="0.0" class="col-xs-10 col-sm-5" />
                             </div>
                         </div>
                         <div class="clearfix form-actions">
                             <div class="col-md-offset-3 col-md-9">
-                                <button class="btn btn-primary" type="submit">
+                                <button class="btn btn-primary" type="submit" id="submit">
                                     <i class="ace-icon fa fa-check bigger-110"></i>
                                     Submit
                                 </button>
@@ -672,7 +663,10 @@
         $("#newInfo").click(function(){
             $("#infoContent").hide();
             $("#formContent").show();
-            $("#form").attr("action","http://localhost:8585/std/student/insert.do");
+            $("#insert").show();
+            $("#update").hide();
+            $("#form .col-sm-1").show();
+            $("#form").attr("action","http://localhost:8585/std/grade/insert.do");
         });
 
         $("#return").click(function(){
@@ -680,48 +674,42 @@
             $("#formContent").hide();
         });
 
+        //进入修改页面
         $(".btn-info").click(function(){
-            var $student = $(this).parent().parent().parent().find('td');
+            var $class = $(this).parent().parent().parent().find('td');
             $("#infoContent").hide();
             $("#formContent").show();
-            $("#studentId").val($student.eq(1).html());
-            $("#studentId").attr("readonly","readonly");
-            $("#studentName").val($student.eq(2).html());
-            $("#studentClass").val($student.eq(3).html());
-            $("#studentBirthday").val($student.eq(4).html());
-            $student.eq(5).html()=="Male"?$("#genderMale").prop("checked",true):$("#genderFemale").prop("checked",true);
-            $("#studentAvgScore").val($student.eq(7).html());
-            $("#form").attr("action","http://localhost:8585/std/student/update.do");
+            $("#insert").hide();
+            $("#update").show();
+            $("#classNameReadOnly").val($class.eq(1).html());
+            $("#classNameReadOnly").attr('readonly','readonly');
+            $("#numberOfStudents").val($class.eq(2).html());
+            $("#classAvgScore").val($class.eq(3).html());
+            $("#form").attr("action","http://localhost:8585/std/grade/update.do");
         });
 
         $(".btn-danger").click(function () {
-            var $student = $(this).parent().parent().parent().find('td');
+            var $class = $(this).parent().parent().parent().find('td');
             if(confirm("是否删除该数据？")){
-                window.location.href="http://localhost:8585/std/student/delete.do?studentId="+$student.eq(1).html();
+                window.location.href="http://localhost:8585/std/grade/delete.do?className="+$class.eq(1).html();
             }
         });
-
+        //分页js
         $("a[value$='pages']").click(function(){
             var $contentPage = $(this).html();
             var timeStamp=new Date().getTime();
-            var url = "http://localhost:8585/std/student/getinfo.do?contentPage="+$contentPage+"&timestamp="+timeStamp;
+            var url = "http://localhost:8585/std/grade/getinfo.do?contentPage="+$contentPage+"&timestamp="+timeStamp;
             $(this).attr("href",url);
         });
-    });
-
-
-
-    jQuery(function($) {
-        $('.input-daterange').datepicker({autoclose:true,format: 'yyyy-mm-dd'});
-        $('.date-picker').datepicker({
-            autoclose: true,
-            todayHighlight: true
-        })
-        //show datepicker when clicking on the icon
-            .next().on(ace.click_event, function(){
-            $(this).prev().focus();
+        //submit处理
+        $("#submit").click(function () {
+            var $className="Grade "+$("#grade").val()+" Class "+$("#class").val();
+            $("#className").val($className.toString());
+            alert($("#className").val());
+            submit();
         });
     });
+
 </script>
 </body>
 </html>

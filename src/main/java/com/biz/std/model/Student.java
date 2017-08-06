@@ -16,7 +16,7 @@ public class Student {
 	private Float studentAvgScore;
 	//private Image studentImage;
 
-	@Column(length=10)
+	@Column(length=40)
 	public String getStudentClass() {
 		return studentClass;
 	}

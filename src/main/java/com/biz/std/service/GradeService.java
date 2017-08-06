@@ -50,14 +50,14 @@ public class GradeService {
 
         Sort.Order order = new Sort.Order(Sort.Direction.ASC,"className");
         Sort sort = new Sort(order);
-        Pageable pageable = new PageRequest(contentPage,size,sort);
+        Pageable pageable = new PageRequest(contentPage-1,size,sort);
         Page<Grade> page = gradePagingAndSortingRepository.findAll(pageable);
 
         grades.addAll(page.getContent());
 
         gradeInfo.clear();
         gradeInfo.setViewName("gradeinfo");
-        gradeInfo.addObject("grade",grades);
+        gradeInfo.addObject("grades",grades);
         gradeInfo.addObject("contentPage",contentPage);
         gradeInfo.addObject("maxPage",page.getTotalPages());
         gradeInfo.addObject("totalDetails",(int)page.getTotalElements());

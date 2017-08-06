@@ -48,7 +48,7 @@ public class SubjectService {
 
         Sort.Order order = new Sort.Order(Sort.Direction.ASC,"subjectName");
         Sort sort = new Sort(order);
-        Pageable pageable = new PageRequest(contentPage,size,sort);
+        Pageable pageable = new PageRequest(contentPage-1,size,sort);
         Page<Subject> page = subjectPagingAndSortingRepository.findAll(pageable);
 
         subjects.addAll(page.getContent());
