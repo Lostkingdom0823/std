@@ -27,11 +27,11 @@ public class StudentUpdateServiceTest {
         System.out.println("tearDown");
     }
 
-    @Test
-    public void testUpdateStudentInfo(){
-        Student student=new Student("1111","Lily","5",new Date(1995,4,22),"female",8,(float) 90.0);
-        studentService.updateStudentInfo(student);
-    }
+//    @Test
+//    public void testUpdateStudentInfo(){
+//        Student student=new Student("1111","Lily","5",new Date(1995,4,22),"female",8,(float) 90.0);
+//        studentService.updateStudentInfo(student);
+//    }
 
     @Test
     public void testGetStudentsInfo(){
@@ -51,9 +51,9 @@ public class StudentUpdateServiceTest {
 
     }
 
-    @Test
-    public void testCrudRepository(){
-        Student student=new Student("1111","Bob","5",new Date(1995,4,22),"male",8,(float) 90.0);
-        studentService.updateStudentInfo(student);
-    }
+//    @Test
+//    public void testCrudRepository(){
+//        Student student=new Student("1111","Bob","5",new Date(1995,4,22),"male",8,(float) 90.0);
+//        studentService.updateStudentInfo(student);
+//    }
 }

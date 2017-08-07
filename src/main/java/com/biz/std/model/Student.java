@@ -14,7 +14,7 @@ public class Student {
 	private String studentClass;
 	private Integer studentSujectsInLearning;
 	private Float studentAvgScore;
-	//private Image studentImage;
+	private String studentImageUrl;
 
 	@Column(length=40)
 	public String getStudentClass() {
@@ -34,7 +34,7 @@ public class Student {
 	public Float getStudentAvgScore() {
 		return studentAvgScore;
 	}
-	public void setStudentAvgScore(float studentAvgScore) {
+	public void setStudentAvgScore(Float studentAvgScore) {
 		this.studentAvgScore = studentAvgScore;
 	}
 	@Id
@@ -66,11 +66,20 @@ public class Student {
 		this.studentBirthday = studentBirthday;
 	}
 
+	@Column(length = 100)
+	public String getStudentImageUrl() {
+		return studentImageUrl;
+	}
+
+	public void setStudentImageUrl(String studentImageUrl) {
+		this.studentImageUrl = studentImageUrl;
+	}
+
 	public Student(){
 
     }
 
-    public  Student(String studentId,String studentName,String studentClass,Date studentBirthday,String studentSex,Integer studentSujectsInLearning,Float studentAvgScore){
+    public  Student(String studentId,String studentName,String studentClass,Date studentBirthday,String studentSex,Integer studentSujectsInLearning,Float studentAvgScore,String studentImageUrl){
 	    this.studentId = studentId;
 	    this.studentName = studentName;
 	    this.studentClass = studentClass;
@@ -78,6 +87,7 @@ public class Student {
 	    this.studentSex = studentSex;
 	    this.studentSujectsInLearning = studentSujectsInLearning;
 	    this.studentAvgScore = studentAvgScore;
+	    this.studentImageUrl = studentImageUrl;
     }
 
 	@Override
@@ -90,6 +100,7 @@ public class Student {
 				", studentClass='" + studentClass + '\'' +
 				", studentSujectsInLearning=" + studentSujectsInLearning +
 				", studentAvgScore=" + studentAvgScore +
+				", studentImageUrl='" + studentImageUrl + '\'' +
 				'}';
 	}
 }
