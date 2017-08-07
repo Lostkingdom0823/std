@@ -1,106 +1,91 @@
 package com.biz.std.model;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.sql.Date;
-import javax.persistence.*;
 
 @Entity
 @Table(name="student")
 public class Student {
 
-	private String studentId;
-	private String studentName;
-	private String studentSex;
-	private Date studentBirthday;
-	private String studentClass;
-	private Integer studentSujectsInLearning;
-	private Float studentAvgScore;
-	private String studentImageUrl;
+        private String studentId;
+        private String studentName;
+        private String studentClass;
+        private Date studentBirthday;
+        private String studentSex;
+        private String subjectsDetail;
+        private Float studentAvgScore;
+        private String studentImageUrl;
 
-	@Column(length=40)
-	public String getStudentClass() {
-		return studentClass;
-	}
-	public void setStudentClass(String studentClass) {
-		this.studentClass = studentClass;
-	}
-	@Column(length=5)
-	public Integer getStudentSujectsInLearning() {
-		return studentSujectsInLearning;
-	}
-	public void setStudentSujectsInLearning(Integer studentSujectsInLearning) {
-		this.studentSujectsInLearning = studentSujectsInLearning;
-	}
-	@Column(nullable = false,columnDefinition = "float default 0.0")
-	public Float getStudentAvgScore() {
-		return studentAvgScore;
-	}
-	public void setStudentAvgScore(Float studentAvgScore) {
-		this.studentAvgScore = studentAvgScore;
-	}
-	@Id
-	@Column(length=40)
-	public String getStudentId() {
-		return studentId;
-	}
-	public void setStudentId(String studentId) {
-		this.studentId = studentId;
-	}
-	@Column(length=40,nullable=false)
-	public String getStudentName() {
-		return studentName;
-	}
-	public void setStudentName(String studentName) {
-		this.studentName = studentName;
-	}
-	@Column(length=10)
-	public String getStudentSex() {
-		return studentSex;
-	}
-	public void setStudentSex(String studentSex) {
-		this.studentSex = studentSex;
-	}
-	public Date getStudentBirthday() {
-		return studentBirthday;
-	}
-	public void setStudentBirthday(Date studentBirthday) {
-		this.studentBirthday = studentBirthday;
-	}
+        @Id
+        @Column(length = 40)
+        public String getStudentId() {
+            return studentId;
+        }
 
-	@Column(length = 100)
-	public String getStudentImageUrl() {
-		return studentImageUrl;
-	}
+        public void setStudentId(String studentId) {
+            this.studentId = studentId;
+        }
+        @Column(length = 40 , nullable = false)
+        public String getStudentName() {
+            return studentName;
+        }
 
-	public void setStudentImageUrl(String studentImageUrl) {
-		this.studentImageUrl = studentImageUrl;
-	}
+        public void setStudentName(String studentName) {
+            this.studentName = studentName;
+        }
 
-	public Student(){
+        @Column(length = 10)
+        public String getStudentSex() {
+            return studentSex;
+        }
 
+        public void setStudentSex(String studentSex) {
+            this.studentSex = studentSex;
+        }
+
+        public Date getStudentBirthday() {
+            return studentBirthday;
+        }
+
+        public void setStudentBirthday(Date studentBirthday) {
+            this.studentBirthday = studentBirthday;
+        }
+
+        @Column(length = 20)
+        public String getStudentClass() {
+            return studentClass;
+        }
+
+        public void setStudentClass(String studentClass) {
+            this.studentClass = studentClass;
+        }
+
+        public String getSubjectsDetail() {
+            return subjectsDetail;
+        }
+
+        public void setSubjectsDetail(String subjectsDetail) {
+            this.subjectsDetail = subjectsDetail;
+        }
+
+        @Column(columnDefinition = "float default 0.0")
+        public Float getStudentAvgScore() {
+            return studentAvgScore;
+        }
+
+        public void setStudentAvgScore(Float studentAvgScore) {
+            this.studentAvgScore = studentAvgScore;
+        }
+        @Column(length = 100)
+        public String getStudentImageUrl() {
+            return studentImageUrl;
+        }
+
+        public void setStudentImageUrl(String studentImageUrl) {
+            this.studentImageUrl = studentImageUrl;
+        }
     }
 
-    public  Student(String studentId,String studentName,String studentClass,Date studentBirthday,String studentSex,Integer studentSujectsInLearning,Float studentAvgScore,String studentImageUrl){
-	    this.studentId = studentId;
-	    this.studentName = studentName;
-	    this.studentClass = studentClass;
-	    this.studentBirthday = studentBirthday;
-	    this.studentSex = studentSex;
-	    this.studentSujectsInLearning = studentSujectsInLearning;
-	    this.studentAvgScore = studentAvgScore;
-	    this.studentImageUrl = studentImageUrl;
-    }
-
-	@Override
-	public String toString() {
-		return "Student{" +
-				"studentId='" + studentId + '\'' +
-				", studentName='" + studentName + '\'' +
-				", studentSex='" + studentSex + '\'' +
-				", studentBirthday=" + studentBirthday +
-				", studentClass='" + studentClass + '\'' +
-				", studentSujectsInLearning=" + studentSujectsInLearning +
-				", studentAvgScore=" + studentAvgScore +
-				", studentImageUrl='" + studentImageUrl + '\'' +
-				'}';
-	}
-}

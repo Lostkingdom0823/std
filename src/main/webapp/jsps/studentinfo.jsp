@@ -571,7 +571,7 @@
                                                                     <div class="profile-info-name"> Subjects in Learning </div>
 
                                                                     <div class="profile-info-value">
-                                                                        <span><%=student.getStudentSujectsInLearning()==null?"-":student.getStudentSujectsInLearning()%></span>
+                                                                        <span><%=student.getSubjectsDetail()==null?"-":student.getSubjectsDetail()%></span>
                                                                     </div>
                                                                 </div>
 
