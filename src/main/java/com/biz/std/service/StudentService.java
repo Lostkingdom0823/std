@@ -30,6 +30,11 @@ public class StudentService {
 
     @Transactional
     public void updateStudentInfo(Student student){
+//        if(studentPagingAndSortingRepository.exists(student.getStudentId())){
+//            Student temp = studentPagingAndSortingRepository.findOne(student.getStudentId());
+//            student.setStudentAvgScore(temp.getStudentAvgScore());
+//            student.setSujects(temp.getSujects());
+//        }
         studentPagingAndSortingRepository.save(student);
     }
 

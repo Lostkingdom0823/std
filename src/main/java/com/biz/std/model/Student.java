@@ -12,7 +12,7 @@ public class Student {
 	private String studentSex;
 	private Date studentBirthday;
 	private String studentClass;
-	private Integer studentSujectsInLearning;
+	private String Sujects;
 	private Float studentAvgScore;
 	private String studentImageUrl;
 
@@ -24,13 +24,13 @@ public class Student {
 		this.studentClass = studentClass;
 	}
 	@Column(length=5)
-	public Integer getStudentSujectsInLearning() {
-		return studentSujectsInLearning;
+	public String getSujects() {
+		return Sujects;
 	}
-	public void setStudentSujectsInLearning(Integer studentSujectsInLearning) {
-		this.studentSujectsInLearning = studentSujectsInLearning;
+	public void setSujects(String Sujects) {
+		this.Sujects = Sujects;
 	}
-	@Column(nullable = false,columnDefinition = "float default 0.0")
+	@Column(columnDefinition = "float default 0.0")
 	public Float getStudentAvgScore() {
 		return studentAvgScore;
 	}
@@ -79,13 +79,13 @@ public class Student {
 
     }
 
-    public  Student(String studentId,String studentName,String studentClass,Date studentBirthday,String studentSex,Integer studentSujectsInLearning,Float studentAvgScore,String studentImageUrl){
+    public  Student(String studentId,String studentName,String studentClass,Date studentBirthday,String studentSex,String Sujects,Float studentAvgScore,String studentImageUrl){
 	    this.studentId = studentId;
 	    this.studentName = studentName;
 	    this.studentClass = studentClass;
 	    this.studentBirthday = studentBirthday;
 	    this.studentSex = studentSex;
-	    this.studentSujectsInLearning = studentSujectsInLearning;
+	    this.Sujects = Sujects;
 	    this.studentAvgScore = studentAvgScore;
 	    this.studentImageUrl = studentImageUrl;
     }
@@ -98,7 +98,7 @@ public class Student {
 				", studentSex='" + studentSex + '\'' +
 				", studentBirthday=" + studentBirthday +
 				", studentClass='" + studentClass + '\'' +
-				", studentSujectsInLearning=" + studentSujectsInLearning +
+				", studentSujectsInLearning=" + Sujects +
 				", studentAvgScore=" + studentAvgScore +
 				", studentImageUrl='" + studentImageUrl + '\'' +
 				'}';

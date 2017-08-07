@@ -569,9 +569,9 @@
 
                                                                 <div class="profile-info-row">
                                                                     <div class="profile-info-name"> Subjects in Learning </div>
-
+                                                                        <!--todo  完成课程相关信息  -->
                                                                     <div class="profile-info-value">
-                                                                        <span><%=student.getStudentSujectsInLearning()==null?"-":student.getStudentSujectsInLearning()%></span>
+                                                                        <span></span>
                                                                     </div>
                                                                 </div>
 
