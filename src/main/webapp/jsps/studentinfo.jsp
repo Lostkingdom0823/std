@@ -243,16 +243,16 @@
                                         <img src="../student/assets/images/avatars/avatar.png" class="msg-photo"
                                              alt="Alex's Avatar"/>
                                         <span class="msg-body">
-													<span class="msg-title">
-														<span class="blue">Alex:</span>
-														Ciao sociis natoque penatibus et auctor ...
-													</span>
+                                            <span class="msg-title">
+                                                <span class="blue">Alex:</span>
+                                                Ciao sociis natoque penatibus et auctor ...
+                                            </span>
 
-													<span class="msg-time">
-														<i class="ace-icon fa fa-clock-o"></i>
-														<span>a moment ago</span>
-													</span>
-												</span>
+                                            <span class="msg-time">
+                                                <i class="ace-icon fa fa-clock-o"></i>
+                                                <span>a moment ago</span>
+                                            </span>
+                                        </span>
                                     </a>
                                 </li>
 
@@ -547,7 +547,7 @@
                                                                     <div class="profile-info-name"> Student Class </div>
 
                                                                     <div class="profile-info-value">
-                                                                        <span><%=student.getStudentClass()==null?"":student.getStudentClass()%></span>
+                                                                        <span><%=student.getStudentClass()==null?"-":student.getStudentClass()%></span>
                                                                     </div>
                                                                 </div>
 
@@ -571,11 +571,7 @@
                                                                     <div class="profile-info-name"> Subjects in Learning </div>
                                                                         <!--todo  完成课程相关信息  -->
                                                                     <div class="profile-info-value">
-<<<<<<< HEAD
                                                                         <span><%=student.getSubjectsDetail()==null?"-":student.getSubjectsDetail()%></span>
-=======
-                                                                        <span></span>
->>>>>>> cc7ebf9cfcf9d9004ba74998078b7d74ec26c37d
                                                                     </div>
                                                                 </div>
 

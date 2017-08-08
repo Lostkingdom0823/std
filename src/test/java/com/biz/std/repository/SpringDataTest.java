@@ -15,12 +15,12 @@ import java.util.List;
 public class SpringDataTest {
 
     private ApplicationContext context = null;
-    private StudentRepository studentRepository = null;
+    private StudentPagingAndSortingRepository studentRepository = null;
 
     @Before
     public void setup() {
         context = new FileSystemXmlApplicationContext("/src/main/webapp/WEB-INF/configs/spring/applicationContext.xml");
-        studentRepository = context.getBean(StudentRepository.class);
+        studentRepository = context.getBean(StudentPagingAndSortingRepository.class);
         System.out.println("setup");
     }
 
@@ -28,19 +28,6 @@ public class SpringDataTest {
     public void tearDown() {
         context = null;
         System.out.println("tearDown");
-    }
-
-    @Test
-    public void testFindByStudentName() {
-        System.out.println("In");
-        Student student = studentRepository.findByStudentName("Lily");
-        System.out.println(student.toString());
-    }
-
-    @Test
-    public void testgetStudentsByIdAndStudentId(){
-        List<Student> students = studentRepository.getStudentsByNameAndId("Lily","1111");
-        System.out.println(students.get(0).getStudentBirthday().getYear()+" "+students.get(0).getStudentBirthday().getMonth()+" "+students.get(0).getStudentBirthday().getDate());
     }
 
     @Test
