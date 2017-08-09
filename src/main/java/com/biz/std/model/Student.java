@@ -1,22 +1,20 @@
 package com.biz.std.model;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.sql.Date;
+import java.util.Set;
 
 @Entity
 @Table(name="student")
 public class Student {
 	private String studentId;
 	private String studentName;
-	private String studentClass;
+	private Grade studentGrade;
 	private Date studentBirthday;
 	private String studentSex;
-	private String subjectsDetail;
-	private Float studentAvgScore;
+	private Float avgScore;
 	private String studentImageUrl;
+	private Set<Subject> subjects;
 
 	@Id
 	@Column(length = 40)
@@ -55,31 +53,14 @@ public class Student {
 		this.studentBirthday = studentBirthday;
 	}
 
-	@Column(length = 20)
-	public String getStudentClass() {
-		return studentClass;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "gradeName")
+	public Grade getStudentGrade() {
+		return studentGrade;
 	}
 
-	public void setStudentClass(String studentClass) {
-		this.studentClass = studentClass;
-	}
-
-	@Column
-	public String getSubjectsDetail() {
-		return subjectsDetail;
-	}
-
-	public void setSubjectsDetail(String subjectsDetail) {
-		this.subjectsDetail = subjectsDetail;
-	}
-
-	@Column(columnDefinition = "float default 0.0")
-	public Float getStudentAvgScore() {
-		return studentAvgScore;
-	}
-
-	public void setStudentAvgScore(Float studentAvgScore) {
-		this.studentAvgScore = studentAvgScore;
+	public void setStudentGrade(Grade studentGrade) {
+		this.studentGrade = studentGrade;
 	}
 
 	@Column(length = 100)
@@ -89,5 +70,23 @@ public class Student {
 
     public void setStudentImageUrl(String studentImageUrl) {
         this.studentImageUrl = studentImageUrl;
+    }
+
+    @OneToMany(cascade = CascadeType.ALL,mappedBy = "student")
+	public Set<Subject> getSubjects() {
+		return subjects;
+	}
+
+	public void setSubjects(Set<Subject> subjects) {
+		this.subjects = subjects;
+	}
+
+	@Column(columnDefinition = "float default 0.0")
+    public Float getAvgScore() {
+        return avgScore;
+    }
+
+    public void setAvgScore(Float avgScore) {
+        this.avgScore = avgScore;
     }
 }

@@ -36,6 +36,7 @@
 	<mvc:resources mapping="/student/assets/**" location="/assets/"/>
 	<mvc:resources mapping="/grade/assets/**" location="/assets/"/>
 	<mvc:resources mapping="/subject/assets/**" location="/assets/"/>
+	<mvc:resources mapping="/student/images/**" location="/images/"/>
 
 	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
 		<property name="viewClass" value="org.springframework.web.servlet.view.JstlView" />

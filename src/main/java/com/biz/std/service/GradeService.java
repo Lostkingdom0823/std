@@ -36,7 +36,7 @@ public class GradeService {
 
     @Transactional
     public void deleteGradeInfo(Grade grade){
-        gradePagingAndSortingRepository.delete(grade.getClassName());
+        gradePagingAndSortingRepository.delete(grade.getGradeName());
 
     }
 

@@ -1,5 +1,6 @@
 package com.biz.std.controller;
 
+import com.biz.std.model.Grade;
 import com.biz.std.model.Student;
 import com.biz.std.service.StudentService;
 import org.apache.commons.fileupload.*;
@@ -38,7 +39,7 @@ public class StudentController {
                     if(item.isFormField()){
                         studentInfo.put(name,Streams.asString(stream));
                     }
-                    else {
+                    else if(!item.isFormField() && stream.available()!=0) {
                         byte[] data = new byte[1024];
                         int len = 0;
                         FileOutputStream fileOutputStream = null;
@@ -51,11 +52,13 @@ public class StudentController {
                     }
                 }
                 Student student = new Student();
+                Grade grade = new Grade();
+                grade.setGradeName(studentInfo.get("studentGrade"));
                 student.setStudentId(studentInfo.get("studentId"));
                 student.setStudentName(studentInfo.get("studentName"));
-                student.setStudentClass(studentInfo.get("studentClass"));
+                student.setStudentGrade(grade);
                 String[] time = studentInfo.get("studentBirthday").split("-");
-                student.setStudentBirthday(new java.sql.Date(Integer.parseInt(time[0]),Integer.parseInt(time[1]),Integer.parseInt(time[2])));
+                student.setStudentBirthday(new java.sql.Date(Integer.parseInt(time[0])-1900,Integer.parseInt(time[1])-1,Integer.parseInt(time[2])));
                 student.setStudentSex(studentInfo.get("studentSex"));
                 student.setStudentImageUrl(studentImageUrl);
                 studentService.updateStudentInfo(student);
@@ -86,29 +89,40 @@ public class StudentController {
                     if(item.isFormField()){
                         studentInfo.put(name,Streams.asString(stream));
                     }
+                    //// TODO: 2017/8/8   寻找合适的方法将图片处理放入service完成
                     else if(!item.isFormField() && stream.available()!=0) {
                         byte[] data = new byte[1024];
                         int len = 0;
                         FileOutputStream fileOutputStream = null;
-                        studentImageUrl = "d://JAVA/std/src/main/webapp/images/" + (int)Math.floor(Math.random() * 100 + 0.5)
+                        //绝对地址前缀
+                        String prefixUrl = "d://JAVA/std/src/main/webapp";
+                        //相对路径
+                        studentImageUrl = "/images/" + (int)Math.floor(Math.random() * 100 + 0.5)
                                 + "/student_" + new Date().getTime() + ".jpg";
-                        fileOutputStream = new FileOutputStream(studentImageUrl);
+                        String fullUrl = prefixUrl+studentImageUrl;
+                        fileOutputStream = new FileOutputStream(fullUrl);
                         while ((len = stream.read(data)) != -1) {
                             fileOutputStream.write(data, 0, len);
                         }
                     }
                 }
                 Student student = new Student();
+                Grade grade = new Grade();
+                grade.setGradeName(studentInfo.get("studentClass"));
                 student.setStudentId(studentInfo.get("studentId"));
                 student.setStudentName(studentInfo.get("studentName"));
-                student.setStudentClass(studentInfo.get("studentClass"));
+                student.setStudentGrade(grade);
                 String[] time = studentInfo.get("studentBirthday").split("-");
                 //?????
-                student.setStudentBirthday(new java.sql.Date(Integer.parseInt(time[0])-1900,Integer.parseInt(time[1]),Integer.parseInt(time[2])));
+                student.setStudentBirthday(new java.sql.Date(Integer.parseInt(time[0])-1900,Integer.parseInt(time[1])-1,Integer.parseInt(time[2])));
                 student.setStudentSex(studentInfo.get("studentSex"));
                 student.setStudentImageUrl(studentImageUrl);
-                studentService.updateStudentInfo(student);
-                return "redirect:/student/getinfo.do";
+                if(studentService.updateStudentInfo(student)) {
+                    return "redirect:/student/getinfo.do";
+                }
+                else {
+                    return "";
+                }
             }catch (Exception e){
                 e.printStackTrace();
                 return "";
@@ -131,4 +145,20 @@ public class StudentController {
 		return studentService.getStudentsInfo(contentPage,size);
 	}
 
+	@RequestMapping("/getcourseinfo.do")
+    public ModelAndView doGetCourseInfo(Integer contentPage,String studentId){
+        Integer size = 10;
+        return studentService.getCourseInfo(contentPage,size,studentId);
+    }
+
+    @RequestMapping("/selectcourse.do")
+    public ModelAndView doSelectCourse(){
+
+        return null;
+    }
+
+    @RequestMapping("/abandoncourse.do")
+    public ModelAndView doAbandonCourse(){
+        return null;
+    }
 }

@@ -1,27 +1,27 @@
 package com.biz.std.model;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.util.Set;
 
 @Entity
 @Table(name = "grade")
 public class Grade {
 
-    private String className;
+    private String gradeName;
     private Integer numberOfStudents;
-    private Float classAvgScore;
+    private Float gradeAvgScore;
+    private Set<Student> students;
 
     @Id
     @Column(length = 40)
-    public String getClassName() {
 
-        return className;
+    public String getGradeName() {
+
+        return gradeName;
     }
 
-    public void setClassName(String className) {
-        this.className = className;
+    public void setGradeName(String gradeName) {
+        this.gradeName = gradeName;
     }
 
     @Column(columnDefinition = "int default 0 not null")
@@ -33,30 +33,24 @@ public class Grade {
         this.numberOfStudents = numberOfStudents;
     }
     @Column(columnDefinition = "float default 0.0 not null")
-    public Float getClassAvgScore() {
-        return classAvgScore;
+    public Float getGradeAvgScore() {
+        return gradeAvgScore;
     }
 
-    public void setClassAvgScore(Float classAvgScore) {
-        this.classAvgScore = classAvgScore;
+    public void setGradeAvgScore(Float gradeAvgScore) {
+        this.gradeAvgScore = gradeAvgScore;
+    }
+
+    @OneToMany(cascade = CascadeType.ALL,mappedBy = "studentGrade")
+    public Set<Student> getStudents() {
+        return students;
+    }
+
+    public void setStudents(Set<Student> students) {
+        this.students = students;
     }
 
     public Grade(){
 
-    }
-
-    public Grade(String className, Integer numberOfStudents, Float classAvgScore){
-        this.className = className;
-        this.numberOfStudents = numberOfStudents;
-        this.classAvgScore = classAvgScore;
-    }
-
-    @Override
-    public String toString() {
-        return "Grade{" +
-                "className='" + className + '\'' +
-                ", numberOfStudents=" + numberOfStudents +
-                ", classAvgScore=" + classAvgScore +
-                '}';
     }
 }
