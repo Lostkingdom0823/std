@@ -40,4 +40,8 @@ public class CourseOffered {
     public void setAvgScore(Float avgScore) {
         this.avgScore = avgScore;
     }
+
+    public CourseOffered(){
+
+    }
 }

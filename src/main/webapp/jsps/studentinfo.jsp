@@ -545,9 +545,8 @@
 
                                                                 <div class="profile-info-row">
                                                                     <div class="profile-info-name"> Student Class </div>
-
                                                                     <div class="profile-info-value">
-                                                                        <span><%=student.getStudentClass()==null?"-":student.getStudentClass()%></span>
+                                                                        <span><%=student.getStudentGrade()==null?"-":student.getStudentGrade()%></span>
                                                                     </div>
                                                                 </div>
 
@@ -571,7 +570,7 @@
                                                                     <div class="profile-info-name"> Subjects in Learning </div>
                                                                         <!--todo  完成课程相关信息  -->
                                                                     <div class="profile-info-value">
-                                                                        <span><%=student.getSubjectsDetail()==null?"-":student.getSubjectsDetail()%></span>
+                                                                        <span> !!!! </span>
                                                                     </div>
                                                                 </div>
 
@@ -579,7 +578,7 @@
                                                                     <div class="profile-info-name"> Student Average Score </div>
 
                                                                     <div class="profile-info-value">
-                                                                        <span><%=student.getStudentAvgScore()==null?"-":student.getStudentAvgScore()%></span>
+                                                                        <span><%=student.getAvgScore()==null?"-":student.getAvgScore()%></span>
                                                                     </div>
                                                                 </div>
                                                             </div>

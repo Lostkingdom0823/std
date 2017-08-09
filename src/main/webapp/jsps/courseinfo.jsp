@@ -1,7 +1,8 @@
 <%@ page import="java.util.List" %>
 <%@ page import="java.util.Iterator" %>
 <%@ page import="java.util.ArrayList" %>
-<%@ page import="com.biz.std.model.Subject" %>
+<%@ page import="com.biz.std.model.CourseOffered" %>
+<%@ page import="com.biz.std.model.CourseSelected" %>
 
 
 <%@page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
@@ -38,7 +39,8 @@
 </head>
 <body class="no-skin">
 <%!
-    List<Subject> subjects = new ArrayList<Subject>();
+    List<CourseOffered> coursesOffered = new ArrayList<CourseOffered>();
+    List<CourseSelected> coursesSelected = new ArrayList<CourseSelected>();
     Integer contentPage = 1;
     Integer maxPage = 1;
     Integer count = 0;
@@ -405,9 +407,6 @@
                         </small>
                     </h1>
                 </div><!-- /.page-header -->
-                <button class="btn btn-primary btn-lg right pull-right" id="newInfo">
-                    <i class="ace-icon fa fa-pencil align-left bigger-110"></i>new info</button>
-                <div class="row">
                     <div class="col-xs-12">
                         <!-- PAGE CONTENT BEGINS -->
                         <div class="row">
@@ -415,37 +414,36 @@
                                 <table id="simple-table" class="table  table-bordered table-hover">
                                     <thead>
                                     <tr>
-                                        <th>queue</th>
-                                        <th>subject name</th>
-                                        <th>number of students</th>
-                                        <th>avarage score</th>
+                                        <th>Queue</th>
+                                        <th>Selected</th>
+                                        <th>Course Name</th>
                                         <th>optiions</th>
                                     </tr>
                                     </thead>
                                     <tbody>
                                     <%
-                                        subjects.clear();
+                                        coursesOffered.clear();
+                                        coursesSelected.clear();
                                         count=0;
-                                        if(request.getAttribute("subjects")!=null) {
-                                            subjects = (List<Subject>) request.getAttribute("subjects");
+                                        if(request.getAttribute("courses")!=null) {
+                                            coursesOffered = (List<CourseOffered>) request.getAttribute("subjects");
                                         }
                                         maxPage = (Integer) request.getAttribute("maxPage");
                                         contentPage=(Integer) request.getAttribute("contentPage");
                                         totalDetails=(Integer) request.getAttribute("totalDetails");
-                                        Iterator<Subject> subjectsIterator = subjects.iterator();
+                                        Iterator<CourseOffered> subjectsIterator = coursesOffered.iterator();
                                     %>
                                     <%
                                         while(subjectsIterator.hasNext()){
                                             count++;
-                                            Subject subject = subjectsIterator.next();
+                                            CourseOffered subject = subjectsIterator.next();
                                     %>
 
                                     <tr>
                                         <td><%=(contentPage-1)*10+count%></td>
                                         <!-- todo   -->
-                                        <td><%=subject.getSubjectName()==null? "" :subject.getSubjectName()%></td>
-                                        <td><%=subject.getNumberOfStudents()==null ? "-":subject.getNumberOfStudents()%></td>
-                                        <td><%=subject.getSubjectAvgScore()==null? "-":subject.getSubjectAvgScore()%></td>
+                                        <td><%=""%></td>
+                                        <td><%=""%></td>
                                         <!-- options -->
                                         <td>
                                             <div class="hidden-sm hidden-xs btn-group">
@@ -541,62 +539,6 @@
                     </div>
                 </div>
             </div>
-            <div class="page-content" id="formContent" style="display:none">
-                <div class="page-header">
-                    <h1>
-                        Form
-                        <small>
-                            <i class="ace-icon fa fa-angle-double-right"></i>
-                            Static &amp; Dynamic Tables
-                        </small>
-                    </h1>
-                </div><!-- /.page-header -->
-                <div class="row">
-                    <!--todo-->
-                    <form class="form-horizontal" id="form" role="form" action="http://localhost:8585/std/subject/insert.do" method="post">
-                        <div class="form-group">
-                            <label class="col-sm-3 control-label no-padding-right" >Subject name</label>
-                            <div class="col-sm-9">
-                                <input type="text" id="subjectName" name="subjectName" placeholder="Subject Name" class="col-xs-10 col-sm-5" />
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="col-sm-3 control-label no-padding-right">Number of students</label>
-
-                            <div class="col-sm-9">
-                                <input type="text" id="numberOfStudents" name="numberOfStudents" placeholder="0" class="col-xs-10 col-sm-5" />
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="col-sm-3 control-label no-padding-right"> Student avarage score </label>
-
-                            <div class="col-sm-9">
-                                <input type="text" id="subjectAvgScore" name="subjectAvgScore" placeholder="0.0" class="col-xs-10 col-sm-5" />
-                            </div>
-                        </div>
-                        <div class="clearfix form-actions">
-                            <div class="col-md-offset-3 col-md-9">
-                                <button class="btn btn-primary" type="submit" id="submit">
-                                    <i class="ace-icon fa fa-check bigger-110"></i>
-                                    Submit
-                                </button>
-
-                                &nbsp; &nbsp; &nbsp;
-                                <button class="btn" type="reset">
-                                    <i class="ace-icon fa fa-undo bigger-110"></i>
-                                    Reset
-                                </button>
-
-                                &nbsp; &nbsp; &nbsp;
-                                <button class="btn btn-warning" type="reset" id="return">
-                                    <i class="ace-icon fa fa-arrow-left bigger-110"></i>
-                                    Back
-                                </button>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
         </div>
     </div>
 </div>
@@ -628,32 +570,13 @@
 <script src="assets/js/ace.min.js"></script>
 <script type="text/javascript">
     $(document).ready(function(){
-        $("#newInfo").click(function(){
-            $("#infoContent").hide();
-            $("#formContent").show();
-            $("#insert").show();
-            $("#update").hide();
-            $("#form .col-sm-1").show();
-            $("#form").attr("action","http://localhost:8585/std/subject/insert.do");
-        });
-
-        $("#return").click(function(){
-            $("#infoContent").show();
-            $("#formContent").hide();
-        });
-
-        //进入修改页面
+        // todo 完成前台逻辑
+        //选课
         $(".btn-info").click(function(){
-            var $class = $(this).parent().parent().parent().find('td');
-            $("#infoContent").hide();
-            $("#formContent").show();
-            $("#subjectName").val($class.eq(1).html());
-            $("#subjectName").attr('readonly','readonly');
-            $("#numberOfStudents").val($class.eq(2).html());
-            $("#subjectAvgScore").val($class.eq(3).html());
-            $("#form").attr("action","http://localhost:8585/std/subject/update.do");
+
         });
 
+        //退课
         $(".btn-danger").click(function () {
             var $subject = $(this).parent().parent().parent().find('td');
             if(confirm("是否删除该数据？")){
@@ -667,13 +590,6 @@
             var url = "http://localhost:8585/std/subject/getinfo.do?contentPage="+$contentPage+"&timestamp="+timeStamp;
             $(this).attr("href",url);
         });
-        //submit处理
-//        $("#submit").click(function () {
-//            var $className="Grade "+$("#grade").val()+" Class "+$("#class").val();
-//            $("#className").val($className.toString());
-//            alert($("#className").val());
-//            submit();
-//        });
     });
 
 </script>

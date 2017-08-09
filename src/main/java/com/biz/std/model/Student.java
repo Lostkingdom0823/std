@@ -14,7 +14,7 @@ public class Student {
 	private String studentSex;
 	private Float avgScore;
 	private String studentImageUrl;
-	private Set<Subject> subjects;
+	private Set<CourseSelected> Courses;
 
 	@Id
 	@Column(length = 40)
@@ -72,15 +72,15 @@ public class Student {
         this.studentImageUrl = studentImageUrl;
     }
 
-    @OneToMany(cascade = CascadeType.ALL,mappedBy = "student")
-	public Set<Subject> getSubjects() {
-		return subjects;
+	@OneToMany(cascade = CascadeType.ALL,mappedBy = "student")
+	public Set<CourseSelected> getCourses() {
+		return Courses;
 	}
 
-	public void setSubjects(Set<Subject> subjects) {
-		this.subjects = subjects;
+	public void setCourses(Set<CourseSelected> courses) {
+		Courses = courses;
 	}
-
+	
 	@Column(columnDefinition = "float default 0.0")
     public Float getAvgScore() {
         return avgScore;
