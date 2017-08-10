@@ -1,29 +1,28 @@
 package com.biz.std.repository;
 
-import com.biz.std.model.CourseOffered;
+import com.biz.std.service.StudentService;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.FileSystemXmlApplicationContext;
-import org.springframework.data.jpa.repository.Query;
-
-import java.util.ArrayList;
 
 
 public class SpringDataTest {
 
     private ApplicationContext context = null;
-    private StudentPagingAndSortingRepository studentRepository = null;
+    private StudentRepository studentRepository = null;
     private CourseSelectedRepository courseSelectedRepository =null;
     private CourseOfferedRepository courseOfferedRepository = null;
+    private StudentService studentService = null;
 
     @Before
     public void setup() {
         context = new FileSystemXmlApplicationContext("/src/main/webapp/WEB-INF/configs/spring/applicationContext.xml");
-        studentRepository = context.getBean(StudentPagingAndSortingRepository.class);
+        studentRepository = context.getBean(StudentRepository.class);
         courseSelectedRepository = context.getBean(CourseSelectedRepository.class);
         courseOfferedRepository = context.getBean(CourseOfferedRepository.class);
+        studentService = context.getBean(StudentService.class);
         System.out.println("setup");
     }
 
@@ -39,7 +38,12 @@ public class SpringDataTest {
     }
 
     @Test
-    public void testTableJoin(){
+    public void testFindByStudentId(){
+        System.out.println(studentRepository.findCourseSelectedByStudentId("111").size());
+    }
 
+    @Test
+    public void testStudentCourseSave(){
+        studentService.selectCourse("111","Chemistry");
     }
 }

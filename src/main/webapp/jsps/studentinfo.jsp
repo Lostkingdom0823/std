@@ -464,7 +464,7 @@
                                             <td><%=student.getStudentId()==null ? "":student.getStudentId()%></td>
                                             <td><%=student.getStudentName()==null ? "":student.getStudentName()%></td>
                                             <td><a href="#">Update Score</a></td>
-                                            <td><a href="#">Choose Subject</a></td>
+                                            <td><a href="#" value="select">Choose Subject</a></td>
                                             <td>
                                                 <div class="hidden-sm hidden-xs btn-group">
                                                     <button class="btn btn-xs btn-info" >
@@ -478,27 +478,27 @@
 
                                                 <div class="hidden-md hidden-lg">
                                                     <div class="inline pos-rel">
-                                                            <button class="btn btn-minier btn-primary dropdown-toggle" data-toggle="dropdown" data-position="auto">
-                                                                <i class="ace-icon fa fa-cog icon-only bigger-110"></i>
-                                                            </button>
+                                                        <button class="btn btn-minier btn-primary dropdown-toggle" data-toggle="dropdown" data-position="auto">
+                                                            <i class="ace-icon fa fa-cog icon-only bigger-110"></i>
+                                                        </button>
 
-                                                            <ul class="dropdown-menu dropdown-only-icon dropdown-yellow dropdown-menu-right dropdown-caret dropdown-close">
-                                                                <li>
-                                                                    <a href="#" class="tooltip-success" data-rel="tooltip" title="Edit">
-                                                                        <span class="green">
-                                                                            <i class="ace-icon fa fa-pencil-square-o bigger-120"></i>
-                                                                        </span>
-                                                                    </a>
-                                                                </li>
+                                                        <ul class="dropdown-menu dropdown-only-icon dropdown-yellow dropdown-menu-right dropdown-caret dropdown-close">
+                                                            <li>
+                                                                <a href="#" class="tooltip-success" data-rel="tooltip" title="Edit">
+                                                                    <span class="green">
+                                                                        <i class="ace-icon fa fa-pencil-square-o bigger-120"></i>
+                                                                    </span>
+                                                                </a>
+                                                            </li>
 
-                                                                <li>
-                                                                    <a href="#" class="tooltip-error" data-rel="tooltip" title="Delete">
-                                                                        <span class="red">
-                                                                            <i class="ace-icon fa fa-trash-o bigger-120"></i>
-                                                                        </span>
-                                                                    </a>
-                                                                </li>
-                                                            </ul>
+                                                            <li>
+                                                                <a href="#" class="tooltip-error" data-rel="tooltip" title="Delete">
+                                                                    <span class="red">
+                                                                        <i class="ace-icon fa fa-trash-o bigger-120"></i>
+                                                                    </span>
+                                                                </a>
+                                                            </li>
+                                                        </ul>
                                                     </div>
                                                 </div>
                                             </td>
@@ -852,6 +852,13 @@
             //blacklist:'exe|php'
             //onchange:''
             //
+        });
+
+        $("a[value$='select']").click(function(){
+
+            $studentId = $(this).parent().parent().find('td').eq(2).html();
+            $(this).attr("href","http://localhost:8585/std/student/getcourseinfo.do?studentId="+$studentId);
+
         });
     });
 

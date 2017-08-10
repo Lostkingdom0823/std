@@ -1,14 +1,9 @@
 <%@ page import="java.util.List" %>
-<%@ page import="com.biz.std.model.Student" %>
 <%@ page import="java.util.Iterator" %>
 <%@ page import="java.util.ArrayList" %>
-<%--
-  Created by IntelliJ IDEA.
-  User: King
-  Date: 2017/8/2
-  Time: 10:44
-  To change this template use File | Settings | File Templates.
---%>
+<%@ page import="com.biz.std.model.CourseOffered" %>
+<%@ page import="com.biz.std.model.CourseSelected" %>
+
 
 <%@page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
@@ -40,20 +35,17 @@
     <!-- ace styles -->
     <link rel="stylesheet" href="assets/css/ace.min.css" class="ace-main-stylesheet" id="main-ace-style" />
     <script src="assets/js/ace-extra.min.js"></script>
-    <style>
-        .profile-info-name{
-            width:200px;
-        }
-    </style>
     <title>student infomation management page</title>
 </head>
 <body class="no-skin">
 <%!
-    List<Student> students = new ArrayList<Student>();
+    List<CourseOffered> coursesOffered = new ArrayList<>();
+    int[] flags = new int[10];
     Integer contentPage = 1;
     Integer maxPage = 1;
     Integer count = 0;
     Integer totalDetails = 0;
+    String studentId = null;
 %>
 
 <div id="navbar" class="navbar navbar-default ace-save-state">
@@ -243,16 +235,16 @@
                                         <img src="../student/assets/images/avatars/avatar.png" class="msg-photo"
                                              alt="Alex's Avatar"/>
                                         <span class="msg-body">
-                                            <span class="msg-title">
-                                                <span class="blue">Alex:</span>
-                                                Ciao sociis natoque penatibus et auctor ...
-                                            </span>
+													<span class="msg-title">
+														<span class="blue">Alex:</span>
+														Ciao sociis natoque penatibus et auctor ...
+													</span>
 
-                                            <span class="msg-time">
-                                                <i class="ace-icon fa fa-clock-o"></i>
-                                                <span>a moment ago</span>
-                                            </span>
-                                        </span>
+													<span class="msg-time">
+														<i class="ace-icon fa fa-clock-o"></i>
+														<span>a moment ago</span>
+													</span>
+												</span>
                                     </a>
                                 </li>
 
@@ -416,9 +408,6 @@
                         </small>
                     </h1>
                 </div><!-- /.page-header -->
-                <button class="btn btn-primary btn-lg right pull-right" id="newInfo">
-                    <i class="ace-icon fa fa-pencil align-left bigger-110"></i>new info</button>
-                <div class="row">
                     <div class="col-xs-12">
                         <!-- PAGE CONTENT BEGINS -->
                         <div class="row">
@@ -426,166 +415,57 @@
                                 <table id="simple-table" class="table  table-bordered table-hover">
                                     <thead>
                                     <tr>
-                                        <th class="center">Queue</th>
-                                        <th class="detail-col">Details</th>
-                                        <th>Student ID</th>
-                                        <th>Student Name</th>
-                                        <th>Update Score</th>
-                                        <th>Choose Subject</th>
-                                        <th>Optiions</th>
+                                        <th>Queue</th>
+                                        <th>Selected</th>
+                                        <th>Course Name</th>
+                                        <th>optiions</th>
                                     </tr>
                                     </thead>
                                     <tbody>
                                     <%
-                                        students.clear();
+                                        coursesOffered.clear();
                                         count=0;
-                                        if(request.getAttribute("students")!=null){
-                                            students = (List<Student>) request.getAttribute("students");
+                                        flags = ((int[]) request.getAttribute("flags")).clone();
+                                        if(request.getAttribute("courseOffered")!=null) {
+                                            coursesOffered = (List<CourseOffered>) request.getAttribute("courseOffered");
                                         }
-                                        students.size();
                                         maxPage = (Integer) request.getAttribute("maxPage");
                                         contentPage=(Integer) request.getAttribute("contentPage");
                                         totalDetails=(Integer) request.getAttribute("totalDetails");
-                                        Iterator<Student> stuIterator = students.iterator();
-                                        while(stuIterator.hasNext()){
-                                            count++;
-                                            Student student = stuIterator.next();
+                                        studentId = (String) request.getAttribute("studentId");
+                                        Iterator<CourseOffered> subjectsIterator = coursesOffered.iterator();
                                     %>
+                                    <%
+                                        while(subjectsIterator.hasNext()){
+                                            count++;
+                                            CourseOffered subject = subjectsIterator.next();
+                                    %>
+
                                     <tr>
-                                        <td class="center"><%=(contentPage-1)*10+count%></td>
-                                        <td class="center">
-                                            <div class="action-buttons">
-                                                <a href="#" class="green bigger-140 show-details-btn" title="Show Details">
-                                                    <i class="ace-icon fa fa-angle-double-down"></i>
-                                                    <span class="sr-only">Details</span>
-                                                </a>
-                                            </div>
-                                        </td>
-                                        <td><%=student.getStudentId()==null ? "":student.getStudentId()%></td>
-                                        <td><%=student.getStudentName()==null ? "":student.getStudentName()%></td>
-                                        <td><a href="#">Update Score</a></td>
-                                        <td><a href="#">Choose Subject</a></td>
+                                        <td><%=(contentPage-1)*10+count%></td>
+                                        <!-- todo   -->
+                                        <td></td>
+                                        <td><%=subject.getCourseName()%></td>
+                                        <!-- options -->
                                         <td>
+                                            <%
+                                            if(flags[count-1]==0){
+                                            %>
                                             <div class="hidden-sm hidden-xs btn-group">
                                                 <button class="btn btn-xs btn-info" >
                                                     <i class="ace-icon fa fa-pencil bigger-120"></i>
                                                 </button>
-
+                                            <%
+                                                }
+                                                else {
+                                            %>
                                                 <button class="btn btn-xs btn-danger">
                                                     <i class="ace-icon fa fa-trash-o bigger-120"></i>
                                                 </button>
                                             </div>
-
-                                            <div class="hidden-md hidden-lg">
-                                                <div class="inline pos-rel">
-                                                    <button class="btn btn-minier btn-primary dropdown-toggle" data-toggle="dropdown" data-position="auto">
-                                                        <i class="ace-icon fa fa-cog icon-only bigger-110"></i>
-                                                    </button>
-
-                                                    <ul class="dropdown-menu dropdown-only-icon dropdown-yellow dropdown-menu-right dropdown-caret dropdown-close">
-                                                        <li>
-                                                            <a href="#" class="tooltip-success" data-rel="tooltip" title="Edit">
-                                                                        <span class="green">
-                                                                            <i class="ace-icon fa fa-pencil-square-o bigger-120"></i>
-                                                                        </span>
-                                                            </a>
-                                                        </li>
-
-                                                        <li>
-                                                            <a href="#" class="tooltip-error" data-rel="tooltip" title="Delete">
-                                                                        <span class="red">
-                                                                            <i class="ace-icon fa fa-trash-o bigger-120"></i>
-                                                                        </span>
-                                                            </a>
-                                                        </li>
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr class="detail-row">
-                                        <td colspan="8">
-                                            <div class="table-detail">
-                                                <div class="row">
-                                                    <div class="col-xs-12 col-sm-2">
-                                                        <div class="text-center">
-                                                            <img height="150" class="thumbnail inline no-margin-bottom" alt="Domain Owner's Avatar" src="<%=student.getStudentImageUrl()==null?"":"/std/student"+student.getStudentImageUrl()%>" />
-                                                            <br />
-                                                            <div class="width-80 label label-info label-xlg arrowed-in arrowed-in-right">
-                                                                <div class="inline position-relative">
-                                                                    <a class="user-title-label" href="#">
-                                                                        <i class="ace-icon fa fa-circle light-green"></i>
-                                                                        &nbsp;
-                                                                        <span class="white"><%=student.getStudentName()==null?"-":student.getStudentName()%></span>
-                                                                    </a>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="col-xs-12 col-sm-7">
-                                                        <div class="space visible-xs"></div>
-
-                                                        <div class="profile-user-info profile-user-info-striped">
-                                                            <div class="profile-info-row">
-                                                                <div class="profile-info-name"> Student ID </div>
-
-                                                                <div class="profile-info-value">
-                                                                    <span><%=student.getStudentId()==null?"-":student.getStudentId()%></span>
-                                                                </div>
-                                                            </div>
-
-                                                            <div class="profile-info-row">
-                                                                <div class="profile-info-name"> Student Name </div>
-
-                                                                <div class="profile-info-value">
-                                                                    <span><%=student.getStudentName()%></span>
-                                                                </div>
-                                                            </div>
-
-                                                            <div class="profile-info-row">
-                                                                <div class="profile-info-name"> Student Class </div>
-                                                                <!--todo wait for completed           -->
-                                                                <div class="profile-info-value">
-                                                                    <span></span>
-                                                                </div>
-                                                            </div>
-
-                                                            <div class="profile-info-row">
-                                                                <div class="profile-info-name"> Student Birthday </div>
-
-                                                                <div class="profile-info-value">
-                                                                    <span><%=student.getStudentBirthday()==null?"-":student.getStudentBirthday().toString()%></span>
-                                                                </div>
-                                                            </div>
-
-                                                            <div class="profile-info-row">
-                                                                <div class="profile-info-name"> Student Gender </div>
-
-                                                                <div class="profile-info-value">
-                                                                    <span><%=student.getStudentSex()==null?"-":student.getStudentSex()%></span>
-                                                                </div>
-                                                            </div>
-
-                                                            <div class="profile-info-row">
-                                                                <div class="profile-info-name"> Subjects in Learning </div>
-                                                                <!--todo  完成课程相关信息  -->
-                                                                <div class="profile-info-value">
-                                                                    <span><%=student.getSubjectsDetail()==null?"-":student.getSubjectsDetail()%></span>
-                                                                </div>
-                                                            </div>
-
-                                                            <div class="profile-info-row">
-                                                                <div class="profile-info-name"> Student Average Score </div>
-
-                                                                <div class="profile-info-value">
-                                                                    <span><%=student.getStudentAvgScore()==null?"-":student.getStudentAvgScore()%></span>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
+                                            <%
+                                                }
+                                            %>
                                         </td>
                                     </tr>
                                     <%
@@ -593,6 +473,7 @@
                                     %>
                                     </tbody>
                                 </table>
+                                <!-- 分页实现 -->
                                 <div class="row">
                                     <div class="col-xs-6" style="margin-top: 8px">
                                         <div class="dataTables_info" id="dynamic-table_info" role="status" aria-live="polite">showing <%=(contentPage*10-9)%> to <%=(contentPage*10)%> of <%=totalDetails%></div>
@@ -643,119 +524,6 @@
                     </div>
                 </div>
             </div>
-            <div class="page-content" id="formContent" style="display:none">
-                <div class="page-header">
-                    <h1>
-                        Form
-                        <small>
-                            <i class="ace-icon fa fa-angle-double-right"></i>
-                            Static &amp; Dynamic Tables
-                        </small>
-                    </h1>
-                </div><!-- /.page-header -->
-                <div class="row">
-                    <form class="form-horizontal" id="form" role="form" enctype="multipart/form-data" action="http://localhost:8585/std/student/insert.do" method="post">
-                        <div class="form-group">
-                            <label class="col-sm-3 control-label no-padding-right" for="studentId"> Student id </label>
-
-                            <div class="col-sm-9">
-                                <input type="text" id="studentId" name="studentId" placeholder="Student id" class="col-xs-10 col-sm-5" maxlength="40"/>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="col-sm-3 control-label no-padding-right" for="studentName"> Student name </label>
-
-                            <div class="col-sm-9">
-                                <input type="text" id="studentName" name="studentName" placeholder="Student name" class="col-xs-10 col-sm-5" maxlength="40"/>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="col-sm-3 control-label no-padding-right" for="studentClass"> Student class </label>
-                            <span class="col-sm-1 label label-xlg label-white middle " style="margin-right:10px;margin-left:10px;margin-top:3px">Grade</span>
-                            <div class="col-sm-1 no-padding-left">
-                                <select class="form-control " id="grade">
-                                    <option>1</option>
-                                    <option>2</option>
-                                    <option>3</option>
-                                    <option>4</option>
-                                    <option>5</option>
-                                    <option>6</option>
-                                </select>
-                            </div>
-                            <span class="col-sm-1 label label-xlg label-white middle " style="margin-right:10px;margin-top:3px">Class</span>
-                            <div class="col-sm-1 no-padding-left">
-                                <select class="form-control " id="class">
-                                    <option>1</option>
-                                    <option>2</option>
-                                    <option>3</option>
-                                    <option>4</option>
-                                    <option>5</option>
-                                    <option>6</option>
-                                </select>
-                            </div>
-                            <input type="hidden" name="studentClass" id="studentClass" maxlength="20"/>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="col-sm-3 control-label no-padding-right" for="studentBirthday"> Student birthday </label>
-
-                            <div class="col-sm-9">
-                                <div class="input-medium">
-                                    <div class="input-group">
-                                        <input class="input-medium date-picker form-control" name="studentBirthday" id="studentBirthday" type="text" data-date-format="yyyy-mm-dd" placeholder="yyyy-mm-dd" />
-                                        <span class="input-group-addon">
-											<i class="ace-icon fa fa-calendar"></i>
-										</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="col-sm-3 control-label no-padding-right"> Student gender </label>
-                            <!-- !!! -->
-                            <div class="col-sm-9">
-                                <label class="inline" style="margin-top: 5px;">
-                                    <input id="genderMale" name="studentSex" type="radio" class="ace" value="Male" />
-                                    <span class="lbl middle"> Male</span>
-                                </label>
-
-                                &nbsp; &nbsp; &nbsp;
-                                <label class="inline" style="margin-top: 5px;">
-                                    <input id="genderFemale" name="studentSex" type="radio" class="ace" value="Female"/>
-                                    <span class="lbl middle"> Female</span>
-                                </label>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="col-sm-3 control-label no-padding-right"> Student Image </label>
-
-                            <div class="col-sm-4">
-                                <input type="file" id="id-input-file-2" name="studentImage" id="studentImage"/>
-                            </div>
-                        </div>
-                        <div class="clearfix form-actions">
-                            <div class="col-md-offset-3 col-md-9">
-                                <button class="btn btn-primary" type="submit" id="submit">
-                                    <i class="ace-icon fa fa-check bigger-110"></i>
-                                    Submit
-                                </button>
-
-                                &nbsp; &nbsp; &nbsp;
-                                <button class="btn" type="reset">
-                                    <i class="ace-icon fa fa-undo bigger-110"></i>
-                                    Reset
-                                </button>
-
-                                &nbsp; &nbsp; &nbsp;
-                                <button class="btn btn-warning" type="reset" id="return">
-                                    <i class="ace-icon fa fa-arrow-left bigger-110"></i>
-                                    Back
-                                </button>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
         </div>
     </div>
 </div>
@@ -787,88 +555,30 @@
 <script src="assets/js/ace.min.js"></script>
 <script type="text/javascript">
     $(document).ready(function(){
-        $("#newInfo").click(function(){
-            $("#infoContent").hide();
-            $("#formContent").show();
-            $("#form").attr("action","http://localhost:8585/std/student/insert.do");
-        });
-
-        $("#return").click(function(){
-            $("#infoContent").show();
-            $("#formContent").hide();
-        });
-
+        // todo 完成前台逻辑
+        //选课
         $(".btn-info").click(function(){
-            var $studentInfoDiv = $(this).parent().parent().parent().next();
-            var $student = $studentInfoDiv.find("span");
-            $("#infoContent").hide();
-            $("#formContent").show();
-            $("#studentId").val($student.eq(1).html());
-            $("#studentId").attr("readonly","readonly");
-            $("#studentName").val($student.eq(2).html());
-            $("#studentClass").val($student.eq(3).html());
-            $("#studentBirthday").val($student.eq(4).html());
-            $student.eq(5).html()=="Male"?$("#genderMale").prop("checked",true):$("#genderFemale").prop("checked",true);
-            $("#studentAvgScore").val($student.eq(7).html());
-            $("#form").attr("action","http://localhost:8585/std/student/update.do");
-        });
+            if(confirm("confirm to study this course?")){
 
-        $(".btn-danger").click(function () {
-            var $student = $(this).parent().parent().parent().find('td');
-            if(confirm("是否删除该数据？")){
-                window.location.href="http://localhost:8585/std/student/delete.do?studentId="+$student.eq(1).html();
             }
         });
 
+        //退课
+        $(".btn-danger").click(function () {
+            var $subject = $(this).parent().parent().parent().find('td');
+            if(confirm("是否删除该数据？")){
+                window.location.href="http://localhost:8585/std/subject/delete.do?subjectName="+$subject.eq(1).html();
+            }
+        });
+        //分页js
         $("a[value$='pages']").click(function(){
             var $contentPage = $(this).html();
             var timeStamp=new Date().getTime();
-            var url = "http://localhost:8585/std/student/getinfo.do?contentPage="+$contentPage+"&timestamp="+timeStamp;
+            var url = "http://localhost:8585/std/subject/getinfo.do?contentPage="+$contentPage+"&timestamp="+timeStamp;
             $(this).attr("href",url);
         });
-
-        $("#submit").click(function () {
-            var $className="Grade "+$("#grade").val()+" Class "+$("#class").val();
-            alert($("#studentId").val());
-            $("#studentClass").val($className.toString());
-            submit();
-        });
-
-        $('.show-details-btn').on('click', function(e) {
-            e.preventDefault();
-            $(this).closest('tr').next().toggleClass('open');
-            $(this).find(ace.vars['.icon']).toggleClass('fa-angle-double-down').toggleClass('fa-angle-double-up');
-        });
-
-        $('#id-input-file-1 , #id-input-file-2').ace_file_input({
-            no_file:'No File ...',
-            btn_choose:'Choose',
-            btn_change:'Change',
-            droppable:false,
-            onchange:null,
-            thumbnail:false ,//| true | large
-            allowExt: ["jpeg", "jpg", "png", "gif" , "bmp"],
-            allowMime: ["image/jpg", "image/jpeg", "image/png", "image/gif", "image/bmp"]
-            //whitelist:'gif|png|jpg|jpeg',
-            //blacklist:'exe|php'
-            //onchange:''
-            //
-        });
     });
 
-
-
-    jQuery(function($) {
-        $('.input-daterange').datepicker({autoclose:true,format: 'yyyy-mm-dd'});
-        $('.date-picker').datepicker({
-            autoclose: true,
-            todayHighlight: true
-        })
-        //show datepicker when clicking on the icon
-            .next().on(ace.click_event, function(){
-            $(this).prev().focus();
-        });
-    });
 </script>
 </body>
 </html>

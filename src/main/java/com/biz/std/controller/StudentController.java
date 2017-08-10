@@ -152,9 +152,9 @@ public class StudentController {
     }
 
     @RequestMapping("/selectcourse.do")
-    public ModelAndView doSelectCourse(){
+    public ModelAndView doSelectCourse(String studentId,String courseName){
 
-        return null;
+        return studentService.selectCourse(studentId,courseName);
     }
 
     @RequestMapping("/abandoncourse.do")
