@@ -1,11 +1,15 @@
 package com.biz.std.repository;
 
+import com.biz.std.model.CourseSelected;
 import com.biz.std.service.StudentService;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.FileSystemXmlApplicationContext;
+
+import java.util.Iterator;
+import java.util.List;
 
 
 public class SpringDataTest {
@@ -45,5 +49,19 @@ public class SpringDataTest {
     @Test
     public void testStudentCourseSave(){
         studentService.selectCourse("111","Chemistry");
+    }
+
+    @Test
+    public void testAbandonCourses(){
+        studentService.abandonCourse("111","Chemistry");
+    }
+
+    @Test
+    public void testFindCourseByStudentId(){
+        List<CourseSelected> courseSelectedList = courseSelectedRepository.findCourseByStudentId("111");
+        Iterator<CourseSelected> iterator = courseSelectedList.iterator();
+        while(iterator.hasNext()){
+            System.out.println(iterator.next().getCourseName());
+        }
     }
 }

@@ -451,14 +451,16 @@
                                             <%
                                             if(flags[count-1]==0){
                                             %>
-                                            <div class="hidden-sm hidden-xs btn-group">
+                                            <div class=" btn-group">
                                                 <button class="btn btn-xs btn-info" >
                                                     <i class="ace-icon fa fa-pencil bigger-120"></i>
                                                 </button>
+                                            </div>
                                             <%
                                                 }
                                                 else {
                                             %>
+                                            <div class=" btn-group">
                                                 <button class="btn btn-xs btn-danger">
                                                     <i class="ace-icon fa fa-trash-o bigger-120"></i>
                                                 </button>
@@ -558,16 +560,17 @@
         // todo 完成前台逻辑
         //选课
         $(".btn-info").click(function(){
+            $courseName = $(this).parent().parent().parent().find('td').eq(2).html();
             if(confirm("confirm to study this course?")){
-
+                window.location.href="http://localhost:8585/std/student/selectcourse.do?studentId=<%=studentId%>&courseName="+$courseName;
             }
         });
 
         //退课
         $(".btn-danger").click(function () {
-            var $subject = $(this).parent().parent().parent().find('td');
-            if(confirm("是否删除该数据？")){
-                window.location.href="http://localhost:8585/std/subject/delete.do?subjectName="+$subject.eq(1).html();
+            var $course = $(this).parent().parent().parent().find('td').eq(2).html();
+            if(confirm("confirm to abandon this course?")){
+                window.location.href="http://localhost:8585/std/student/abandoncourse.do?studentId=<%=studentId%>&courseName="+$course;
             }
         });
         //分页js

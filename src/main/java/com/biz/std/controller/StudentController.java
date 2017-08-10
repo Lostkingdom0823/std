@@ -152,13 +152,20 @@ public class StudentController {
     }
 
     @RequestMapping("/selectcourse.do")
-    public ModelAndView doSelectCourse(String studentId,String courseName){
-
-        return studentService.selectCourse(studentId,courseName);
+    public String doSelectCourse(String studentId,String courseName){
+        studentService.selectCourse(studentId,courseName);
+        return "redirect:/student/getcourseinfo.do?studentId="+studentId;
     }
 
     @RequestMapping("/abandoncourse.do")
-    public ModelAndView doAbandonCourse(){
-        return null;
+    public String doAbandonCourse(String studentId,String courseName){
+        studentService.abandonCourse(studentId,courseName);
+        return "redirect:/student/getcourseinfo.do?studentId="+studentId;
+    }
+
+    @RequestMapping("/getscoreinfo.do")
+    public ModelAndView doGetScoreInfo(String studentId){
+        return  studentService.getStudentScoreInfo(studentId);
+
     }
 }

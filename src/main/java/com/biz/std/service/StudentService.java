@@ -64,7 +64,7 @@ public class StudentService {
         }
 
     }
-
+    // TODO: 2017/8/10 外键引入导致的删除顺序问题，需要解决
     @Transactional
     public void deleteStudentInfo(String studentId){
         studentRepository.delete(studentId);
@@ -108,11 +108,12 @@ public class StudentService {
         Pageable pageable = new PageRequest(contentPage-1,size,sort);
         Page<CourseOffered> page = courseOfferedRepository.findAll(pageable);
         courses.addAll(page.getContent());
-        System.out.println(courses.size());
+
         //获取学生已选课程信息
         List<String> coursesSelected = new ArrayList<String>();
         coursesSelected.addAll(studentRepository.findCourseSelectedByStudentId(studentId));
         Iterator<CourseOffered> pageIterator = page.iterator();
+
         //设置标记 PS:感觉好蠢_(:з」∠)_
         for(int i = 0 ; i < 10 ; i++){
             Iterator<String> courseSelectedIterator = coursesSelected.iterator();
@@ -141,16 +142,60 @@ public class StudentService {
         return courseInfo;
     }
 
-    public ModelAndView selectCourse(String studentId, String courseName) {
+    @Transactional
+    public boolean selectCourse(String studentId, String courseName) {
         Student student = studentRepository.findOne(studentId);
+        System.out.println(student.getStudentId());
+
         CourseSelected courseSelected = new CourseSelected();
         courseSelected.setCourseId(studentId+courseName);
         courseSelected.setCourseName(courseName);
         courseSelected.setStudent(student);
+
         Set<CourseSelected> selectedSet = new HashSet<CourseSelected>();
         selectedSet.add(courseSelected);
         student.setCourses(selectedSet);
         studentRepository.save(student);
+        return true;
+    }
+
+    @Transactional
+    public boolean abandonCourse(String studentId, String courseName){
+
+        courseSelectedRepository.delete(studentId+courseName);
+
+        return true;
+    }
+
+    public ModelAndView getStudentScoreInfo(String studentId) {
+
+        List<CourseSelected> courseSelectedList = new ArrayList<CourseSelected>();
+
+        courseSelectedList.addAll(courseSelectedRepository.findCourseByStudentId(studentId));
+
+        studentInfo.clear();
+        studentInfo.setViewName("scoreinfo");
+        studentInfo.addObject("courseSelected",courseSelectedList);
         return null;
+    }
+
+    @Transactional
+    public boolean updateStudentScoreInfo(String studentId,String courseName,Float courseScore){
+
+        Student student = studentRepository.findOne(studentId);
+        List<CourseSelected> courseSelectedList = courseSelectedRepository.findCourseByStudentId(studentId);
+        Iterator<CourseSelected> courseSelectedIterator = courseSelectedList.iterator();
+        while (courseSelectedIterator.hasNext()){
+            CourseSelected courseSelected = courseSelectedIterator.next();
+            if(courseSelected.getCourseName().equals(courseName)){
+                courseSelected.setScore(courseScore);
+                courseSelectedRepository.save(courseSelected);
+                break;
+            }
+        }
+
+        //// TODO: 2017/8/11 完善分数修改，完成分数修改界面，绑定相关逻辑
+
+        return true;
     }
 }
