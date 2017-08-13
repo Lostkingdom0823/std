@@ -2,9 +2,11 @@ package com.biz.std.service;
 
 import com.biz.std.model.CourseOffered;
 import com.biz.std.model.CourseSelected;
+import com.biz.std.model.Grade;
 import com.biz.std.model.Student;
 import com.biz.std.repository.CourseOfferedRepository;
 import com.biz.std.repository.CourseSelectedRepository;
+import com.biz.std.repository.GradeRepository;
 import com.biz.std.repository.StudentRepository;
 import com.biz.std.vo.CourseInfo;
 import com.biz.std.vo.StudentInfo;
@@ -37,9 +39,23 @@ public class StudentService {
     @Autowired
     private CourseInfo courseInfo;
 
+    @Autowired
+    private GradeRepository gradeRepository;
+
     @Transactional
     public void insertStudentInfo(Student student){
-        studentRepository.save(student);
+        if(!studentRepository.exists(student.getStudentId())) {
+            if (!gradeRepository.exists(student.getStudentGrade().getGradeName())) {
+                Grade grade = student.getStudentGrade();
+                grade.setNumberOfStudents(1);
+                grade.setGradeAvgScore((float)0.0);
+                gradeRepository.save(student.getStudentGrade());
+            }
+            studentRepository.save(student);
+        }
+        else{
+
+        }
     }
 
     @Transactional
@@ -64,12 +80,17 @@ public class StudentService {
         }
 
     }
-    // TODO: 2017/8/10 外键引入导致的删除顺序问题，需要解决
+
     @Transactional
     public void deleteStudentInfo(String studentId){
+
+        List<CourseSelected> courseSelectedList = courseSelectedRepository.findCourseByStudentId(studentId);
+        courseSelectedRepository.delete(courseSelectedList);
+
         studentRepository.delete(studentId);
     }
 
+    // TODO: 2017/8/12 完善信息展示
     public ModelAndView getStudentsInfo(Integer contentPage, Integer size){
         List<Student> students = new ArrayList<Student>();
         if(contentPage==null){
@@ -150,6 +171,7 @@ public class StudentService {
         CourseSelected courseSelected = new CourseSelected();
         courseSelected.setCourseId(studentId+courseName);
         courseSelected.setCourseName(courseName);
+        courseSelected.setScore((float)0.0);
         courseSelected.setStudent(student);
 
         Set<CourseSelected> selectedSet = new HashSet<CourseSelected>();
@@ -175,26 +197,44 @@ public class StudentService {
 
         studentInfo.clear();
         studentInfo.setViewName("scoreinfo");
-        studentInfo.addObject("courseSelected",courseSelectedList);
-        return null;
+        studentInfo.addObject("courses",courseSelectedList);
+        studentInfo.addObject("studentId",studentId);
+        return studentInfo;
     }
 
     @Transactional
     public boolean updateStudentScoreInfo(String studentId,String courseName,Float courseScore){
 
         Student student = studentRepository.findOne(studentId);
-        List<CourseSelected> courseSelectedList = courseSelectedRepository.findCourseByStudentId(studentId);
-        Iterator<CourseSelected> courseSelectedIterator = courseSelectedList.iterator();
-        while (courseSelectedIterator.hasNext()){
-            CourseSelected courseSelected = courseSelectedIterator.next();
-            if(courseSelected.getCourseName().equals(courseName)){
-                courseSelected.setScore(courseScore);
-                courseSelectedRepository.save(courseSelected);
-                break;
-            }
+        String studentGradeName = studentRepository.findStudentGradeByStudentId(studentId);
+        Grade grade = gradeRepository.findOne(studentGradeName);
+        if(student.getAvgScore()==null){
+            student.setAvgScore((float)0.0);
         }
 
-        //// TODO: 2017/8/11 完善分数修改，完成分数修改界面，绑定相关逻辑
+        String[] avgScoreAndCount = courseSelectedRepository.getAvgScoresAndCount(studentId).split(",");
+        CourseSelected courseSelected = courseSelectedRepository.findOne(studentId+courseName);
+        Float oldScore = courseSelected.getScore();
+
+        courseSelected.setStudent(student);
+        courseSelected.setCourseId(studentId+courseName);
+        courseSelected.setScore(courseScore);
+        courseSelected.setCourseName(courseName);
+
+        //计算学生平均分
+        Float scoreChange = courseScore - oldScore;
+        Float avgScoreNow = (scoreChange/Float.valueOf(avgScoreAndCount[0]))+student.getAvgScore();
+        Float avgScoreChange = avgScoreNow - student.getAvgScore();
+        student.setAvgScore(avgScoreNow);
+        student.setStudentGrade(grade);
+
+        //计算班级平均分
+        Float gradeAvgScore = (avgScoreChange/studentRepository.getNumberOfStudentByGradeName(studentGradeName))+grade.getGradeAvgScore();
+        grade.setGradeAvgScore(gradeAvgScore);
+
+        courseSelectedRepository.save(courseSelected);
+        studentRepository.save(student);
+        gradeRepository.save(grade);
 
         return true;
     }

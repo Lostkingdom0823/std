@@ -378,21 +378,21 @@
     <div id="sidebar" class="sidebar responsive ace-save-state" data-sidebar="true" data-sidebar-scroll="true" data-sidebar-hover="true">
         <ul class="nav nav-list" style="top: 0px;">
             <li class="">
-                <a href="#">
+                <a href="http://localhost:8585/std/student/getinfo.do">
                     <i class="menu-icon fa fa-user-o"></i>
                     Students
                 </a>
             </li>
             <li class="">
-                <a href="#">
+                <a href="http://localhost:8585/std/grade/getinfo.do">
                     <i class="menu-icon fa fa-flag"></i>
                     Grade
                 </a>
             </li>
             <li class="">
-                <a href="#">
+                <a href="http://localhost:8585/std/course/getinfo.do">
                     <i class="menu-icon fa fa-book"></i>
-                    Subject
+                    Course
                 </a>
             </li>
         </ul>
@@ -422,7 +422,7 @@
                                     <thead>
                                     <tr>
                                         <th>queue</th>
-                                        <th>class name</th>
+                                        <th>grade name</th>
                                         <th>number of students</th>
                                         <th>avarage score</th>
                                         <th>optiions</th>
@@ -439,7 +439,7 @@
                                         contentPage=(Integer) request.getAttribute("contentPage");
                                         totalDetails=(Integer) request.getAttribute("totalDetails");
                                         Iterator<Grade> gradeIterator = grades.iterator();
-                                        %>
+                                    %>
                                     <%
                                         while(gradeIterator.hasNext()){
                                             count++;
@@ -449,9 +449,9 @@
                                     <tr>
                                         <td><%=(contentPage-1)*10+count%></td>
                                         <!-- todo   -->
-                                        <td><%=grade.getClassName()==null? "" :grade.getClassName()%></td>
+                                        <td><%=grade.getGradeName()==null? "" :grade.getGradeName()%></td>
                                         <td><%=grade.getNumberOfStudents()==null ? "-":grade.getNumberOfStudents()%></td>
-                                        <td><%=grade.getClassAvgScore()==null? "-":grade.getClassAvgScore()%></td>
+                                        <td><%=grade.getGradeAvgScore()==null? "-":grade.getGradeAvgScore()%></td>
                                         <!-- options -->
                                         <td>
                                             <div class="hidden-sm hidden-xs btn-group">
@@ -473,17 +473,17 @@
                                                     <ul class="dropdown-menu dropdown-only-icon dropdown-yellow dropdown-menu-right dropdown-caret dropdown-close">
                                                         <li>
                                                             <a href="#" class="tooltip-success" data-rel="tooltip" title="Edit">
-                                                                                <span class="green">
-                                                                                    <i class="ace-icon fa fa-pencil-square-o bigger-120"></i>
-                                                                                </span>
+                                                                <span class="green">
+                                                                    <i class="ace-icon fa fa-pencil-square-o bigger-120"></i>
+                                                                </span>
                                                             </a>
                                                         </li>
 
                                                         <li>
                                                             <a href="#" class="tooltip-error" data-rel="tooltip" title="Delete">
-                                                                                <span class="red">
-                                                                                    <i class="ace-icon fa fa-trash-o bigger-120"></i>
-                                                                                </span>
+                                                                <span class="red">
+                                                                    <i class="ace-icon fa fa-trash-o bigger-120"></i>
+                                                                </span>
                                                             </a>
                                                         </li>
                                                     </ul>
@@ -584,26 +584,12 @@
                                     <option>6</option>
                                 </select>
                             </div>
-                            <input type="hidden" name="className" id="className"/>
+                            <input type="hidden" name="gradeName" id="gradeName"/>
                         </div>
                         <div class="form-group" id="update">
                             <label class="col-sm-3 control-label no-padding-right" >Class name</label>
                             <div class="col-sm-9">
-                                <input type="text" id="classNameReadOnly" name="className" placeholder="0" class="col-xs-10 col-sm-5" />
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="col-sm-3 control-label no-padding-right">Number of students</label>
-
-                            <div class="col-sm-9">
-                                <input type="text" id="numberOfStudents" name="numberOfStudents" placeholder="0" class="col-xs-10 col-sm-5" />
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="col-sm-3 control-label no-padding-right"> Student avarage score </label>
-
-                            <div class="col-sm-9">
-                                <input type="text" id="classAvgScore" name="classAvgScore" placeholder="0.0" class="col-xs-10 col-sm-5" />
+                                <input type="text" id="gradeNameReadOnly" name="gradeName" placeholder="0" class="col-xs-10 col-sm-5" />
                             </div>
                         </div>
                         <div class="clearfix form-actions">
@@ -681,8 +667,8 @@
             $("#formContent").show();
             $("#insert").hide();
             $("#update").show();
-            $("#classNameReadOnly").val($class.eq(1).html());
-            $("#classNameReadOnly").attr('readonly','readonly');
+            $("#gradeNameReadOnly").val($class.eq(1).html());
+            $("#gradeNameReadOnly").attr('readonly','readonly');
             $("#numberOfStudents").val($class.eq(2).html());
             $("#classAvgScore").val($class.eq(3).html());
             $("#form").attr("action","http://localhost:8585/std/grade/update.do");
@@ -691,7 +677,7 @@
         $(".btn-danger").click(function () {
             var $class = $(this).parent().parent().parent().find('td');
             if(confirm("是否删除该数据？")){
-                window.location.href="http://localhost:8585/std/grade/delete.do?className="+$class.eq(1).html();
+                window.location.href="http://localhost:8585/std/grade/delete.do?gradeName="+$class.eq(1).html();
             }
         });
         //分页js
@@ -703,9 +689,8 @@
         });
         //submit处理
         $("#submit").click(function () {
-            var $className="Grade "+$("#grade").val()+" Class "+$("#class").val();
-            $("#className").val($className.toString());
-            alert($("#className").val());
+            var $gradeName="Grade "+$("#grade").val()+" Class "+$("#class").val();
+            $("#gradeName").val($gradeName);
             submit();
         });
     });

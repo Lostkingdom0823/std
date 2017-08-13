@@ -39,12 +39,8 @@
 </head>
 <body class="no-skin">
 <%!
-    List<CourseOffered> coursesOffered = new ArrayList<>();
-    int[] flags = new int[10];
-    Integer contentPage = 1;
-    Integer maxPage = 1;
+    List<CourseSelected> coursesSelected = new ArrayList<>();
     Integer count = 0;
-    Integer totalDetails = 0;
     String studentId = null;
 %>
 
@@ -407,128 +403,107 @@
                         </small>
                     </h1>
                 </div><!-- /.page-header -->
-                    <div class="col-xs-12">
-                        <!-- PAGE CONTENT BEGINS -->
-                        <button class="btn btn-primary btn-lg right pull-right" id="backToStudentInfo">
-                            <i class="ace-icon fa fa-undo align-left bigger-110"></i>back</button>
-                        <div class="row">
-                            <div class="col-xs-12">
-                                <table id="simple-table" class="table  table-bordered table-hover">
-                                    <thead>
-                                    <tr>
-                                        <th>Queue</th>
-                                        <th>Selected</th>
-                                        <th>Course Name</th>
-                                        <th>optiions</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    <%
-                                        coursesOffered.clear();
-                                        count=0;
-                                        flags = ((int[]) request.getAttribute("flags")).clone();
-                                        if(request.getAttribute("courseOffered")!=null) {
-                                            coursesOffered = (List<CourseOffered>) request.getAttribute("courseOffered");
-                                        }
-                                        maxPage = (Integer) request.getAttribute("maxPage");
-                                        contentPage=(Integer) request.getAttribute("contentPage");
-                                        totalDetails=(Integer) request.getAttribute("totalDetails");
-                                        studentId = (String) request.getAttribute("studentId");
-                                        Iterator<CourseOffered> subjectsIterator = coursesOffered.iterator();
-                                    %>
-                                    <%
-                                        while(subjectsIterator.hasNext()){
-                                            count++;
-                                            CourseOffered subject = subjectsIterator.next();
-                                    %>
+                <div class="col-xs-12">
+                    <!-- PAGE CONTENT BEGINS -->
+                    <button class="btn btn-primary btn-lg right pull-right" id="backToStudentInfo">
+                        <i class="ace-icon fa fa-undo align-left bigger-110"></i>back</button>
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <table id="simple-table" class="table  table-bordered table-hover">
+                                <thead>
+                                <tr>
+                                    <th>Queue</th>
+                                    <th>Course Name</th>
+                                    <th>Score</th>
+                                    <th>optiions</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <%
+                                    coursesSelected.clear();
+                                    count=0;
+                                    if(request.getAttribute("courses")!=null) {
+                                        coursesSelected = (List<CourseSelected>) request.getAttribute("courses");
+                                    }
+                                    studentId = (String) request.getAttribute("studentId");
+                                    Iterator<CourseSelected> courseSelectedIterator = coursesSelected.iterator();
+                                %>
+                                <%
+                                    while(courseSelectedIterator.hasNext()){
+                                        count++;
+                                        CourseSelected courseSelected = courseSelectedIterator.next();
+                                %>
 
-                                    <tr>
-                                        <td><%=(contentPage-1)*10+count%></td>
-                                        <!-- todo   -->
-                                        <td></td>
-                                        <td><%=subject.getCourseName()%></td>
-                                        <!-- options -->
-                                        <td>
-                                            <%
-                                            if(flags[count-1]==0){
-                                            %>
-                                            <div class=" btn-group">
-                                                <button class="btn btn-xs btn-info" >
-                                                    <i class="ace-icon fa fa-pencil bigger-120"></i>
-                                                </button>
-                                            </div>
-                                            <%
-                                                }
-                                                else {
-                                            %>
-                                            <div class=" btn-group">
-                                                <button class="btn btn-xs btn-danger">
-                                                    <i class="ace-icon fa fa-trash-o bigger-120"></i>
-                                                </button>
-                                            </div>
-                                            <%
-                                                }
-                                            %>
-                                        </td>
-                                    </tr>
-                                    <%
-                                        }
-                                    %>
-                                    </tbody>
-                                </table>
-                                <!-- 分页实现 -->
-                                <div class="row">
-                                    <div class="col-xs-6" style="margin-top: 8px">
-                                        <div class="dataTables_info" id="dynamic-table_info" role="status" aria-live="polite">showing <%=(contentPage*10-9)%> to <%=(contentPage*10)%> of <%=totalDetails%></div>
-                                    </div>
-                                    <div class="col-xs-6">
-                                        <div class="dataTables_paginate paging_simple_numbers" id="dynamic-table_paginate">
-                                            <ul class="pagination">
-                                                <li class="paginate_button ">
-                                                    <a href="" value="pages">1</a>
-                                                </li>
-                                                <%
-                                                    if(contentPage>=5){
-                                                %>
-                                                <p style="display:inline;margin:10px">…</p>
-                                                <%
-                                                    }
-                                                    for(int i = contentPage-2 ; i <= contentPage+2; i++){
-                                                        if(i<=1)
-                                                            continue;
-                                                        if(i>maxPage){
-                                                            break;
-                                                        }
-                                                %>
-                                                <li class="paginate_button ">
-                                                    <a href="" value="pages"><%=i %></a>
-                                                </li>
-                                                <%
-                                                    }
-                                                    if((contentPage+2)<(maxPage-1)){
-                                                %>
-                                                <p style="display:inline;margin:10px">…</p>
-                                                <%
-                                                    }
-                                                    if(contentPage+2<maxPage){
-                                                %>
-                                                <li class="paginate_button ">
-                                                    <a href="" value="pages"><%= maxPage %></a>
-                                                </li>
-                                                <%
-                                                    }
-                                                %>
-                                            </ul>
+                                <tr>
+                                    <td><%=count%></td>
+                                    <td><%=courseSelected.getCourseName()%></td>
+                                    <td><%=courseSelected.getScore()%></td>
+                                    <!-- options -->
+                                    <td>
+                                        <div class=" btn-group">
+                                            <button class="btn btn-xs btn-info" >
+                                                <i class="ace-icon fa fa-pencil bigger-120"></i>
+                                            </button>
                                         </div>
-                                    </div>
-                                </div>
-                            </div>
+                                    </td>
+                                </tr>
+                                <%
+                                    }
+                                %>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
             </div>
+            <div class="page-content" id="formContent" style="display:none">
+                <div class="page-header">
+                    <h1>
+                        Form
+                        <small>
+                            <i class="ace-icon fa fa-angle-double-right"></i>
+                            Static &amp; Dynamic Tables
+                        </small>
+                    </h1>
+                </div><!-- /.page-header -->
+                <div class="row">
+                    <!--todo-->
+                    <form class="form-horizontal" id="form" action="http://localhost:8585/std/student/changescore.do" method="post">
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label no-padding-right" >Course Score</label>
+                            <div class="col-sm-9">
+                                <input type="text" id="courseScore" name="courseScore" placeholder="0.0" class="col-xs-10 col-sm-5" />
+                            </div>
+                        </div>
+                        <input type="hidden" name="studentId" id="studentId"value="<%=studentId%>"/>
+                        <input type="hidden" name="courseName" id="courseName" />
+                        <div class="clearfix form-actions">
+                            <div class="col-md-offset-3 col-md-9">
+                                <button class="btn btn-primary" type="submit" id="submit">
+                                    <i class="ace-icon fa fa-check bigger-110"></i>
+                                    Submit
+                                </button>
+
+                                &nbsp; &nbsp; &nbsp;
+                                <button class="btn" type="reset">
+                                    <i class="ace-icon fa fa-undo bigger-110"></i>
+                                    Reset
+                                </button>
+
+                                &nbsp; &nbsp; &nbsp;
+                                <button class="btn btn-warning" type="reset" id="return">
+                                    <i class="ace-icon fa fa-arrow-left bigger-110"></i>
+                                    Back
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
         </div>
     </div>
+</div>
 </div>
 <script src="assets/js/jquery-2.1.4.min.js"></script>
 <script type="text/javascript">
@@ -559,26 +534,21 @@
 <script type="text/javascript">
     $(document).ready(function(){
         // todo 完成前台逻辑
-
+        //返回学生信息
         $("#backToStudentInfo").click(function () {
             window.location.href="http://localhost:8585/std/student/getinfo.do";
         });
 
-        //选课
+        //进入修改页面
         $(".btn-info").click(function(){
-            $courseName = $(this).parent().parent().parent().find('td').eq(2).html();
-            if(confirm("confirm to study this course?")){
-                window.location.href="http://localhost:8585/std/student/selectcourse.do?studentId=<%=studentId%>&courseName="+$courseName;
-            }
+            var $course = $(this).parent().parent().parent().find('td');
+            $("#infoContent").hide();
+            $("#formContent").show();
+            $("#courseName").val($course.eq(1).html())
+            $("#courseScore").val($course.eq(2).html());
+            $("#form").attr("action","http://localhost:8585/std/student/changescore.do");
         });
 
-        //退课
-        $(".btn-danger").click(function () {
-            var $course = $(this).parent().parent().parent().find('td').eq(2).html();
-            if(confirm("confirm to abandon this course?")){
-                window.location.href="http://localhost:8585/std/student/abandoncourse.do?studentId=<%=studentId%>&courseName="+$course;
-            }
-        });
         //分页js
         $("a[value$='pages']").click(function(){
             var $contentPage = $(this).html();
@@ -591,3 +561,4 @@
 </script>
 </body>
 </html>
+

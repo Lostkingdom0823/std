@@ -13,7 +13,7 @@ public class Grade {
     private Set<Student> students;
 
     @Id
-    @Column(length = 40)
+    @Column(length = 20)
 
     public String getGradeName() {
 
@@ -24,7 +24,7 @@ public class Grade {
         this.gradeName = gradeName;
     }
 
-    @Column(columnDefinition = "int default 0 not null")
+    @Column(columnDefinition = "int default 0")
     public Integer getNumberOfStudents() {
         return numberOfStudents;
     }
@@ -32,7 +32,7 @@ public class Grade {
     public void setNumberOfStudents(Integer numberOfStudents) {
         this.numberOfStudents = numberOfStudents;
     }
-    @Column(columnDefinition = "float default 0.0 not null")
+    @Column(columnDefinition = "float default 0.0")
     public Float getGradeAvgScore() {
         return gradeAvgScore;
     }

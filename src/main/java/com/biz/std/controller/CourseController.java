@@ -1,5 +1,6 @@
 package com.biz.std.controller;
 
+import com.biz.std.model.CourseOffered;
 import com.biz.std.service.CourseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -14,13 +15,19 @@ public class CourseController {
     private CourseService courseService;
 
     @RequestMapping("/insert.do")
-    public String doInsert(){
-        return "";
+    public String doInsert(String courseName){
+        if(courseService.insertCourseInfo(courseName)) {
+            return "redirect:/course/getinfo.do";
+        }
+        else {
+            return "";
+        }
     }
 
     @RequestMapping("/update.do")
-    public String doUpdate(){
-        return "";
+    public String doUpdate(String oldCourseName,String newCourseName){
+        courseService.updateCourseInfo(oldCourseName,newCourseName);
+        return "redirect:/course/getinfo.do";
     }
 
     @RequestMapping("/delete.do")
@@ -30,8 +37,8 @@ public class CourseController {
 
     @RequestMapping("/getinfo.do")
     public ModelAndView doGetInfo(Integer contentPage){
-        int size = 10;
-        return null;
+        Integer size = 10;
+        return courseService.getCourseInfo(contentPage,size);
 
     }
 
