@@ -49,7 +49,9 @@
 </head>
 <body class="no-skin">
 <%!
-    List<Student> students = new ArrayList<Student>();
+    List<Student> students = new ArrayList<>();
+    List<String> grades = new ArrayList<>();
+    Integer coursesInLearning = 0;
     Integer contentPage = 1;
     Integer maxPage = 1;
     Integer count = 0;
@@ -383,26 +385,25 @@
     <div id="sidebar" class="sidebar responsive ace-save-state" data-sidebar="true" data-sidebar-scroll="true" data-sidebar-hover="true">
         <ul class="nav nav-list" style="top: 0px;">
             <li class="">
-                <a href="#">
+                <a href="http://localhost:8585/std/student/getinfo.do">
                     <i class="menu-icon fa fa-user-o"></i>
                     Students
                 </a>
             </li>
             <li class="">
-                <a href="#">
+                <a href="http://localhost:8585/std/grade/getinfo.do">
                     <i class="menu-icon fa fa-flag"></i>
                     Grade
                 </a>
             </li>
             <li class="">
-                <a href="#">
+                <a href="http://localhost:8585/std/course/getinfo.do">
                     <i class="menu-icon fa fa-book"></i>
-                    Subject
+                    Course
                 </a>
             </li>
         </ul>
     </div>
-
     <div class="main-content">
         <div class="main-content-inner">
             <div class="breadcrumbs ace-save-state" id="breadcrumbs"></div>
@@ -440,7 +441,7 @@
                                         students.clear();
                                         count=0;
                                         if(request.getAttribute("students")!=null){
-                                        students = (List<Student>) request.getAttribute("students");
+                                            students = (List<Student>) request.getAttribute("students");
                                         }
                                         students.size();
                                         maxPage = (Integer) request.getAttribute("maxPage");
@@ -463,7 +464,7 @@
                                             </td>
                                             <td><%=student.getStudentId()==null ? "":student.getStudentId()%></td>
                                             <td><%=student.getStudentName()==null ? "":student.getStudentName()%></td>
-                                            <td><a href="#">Update Score</a></td>
+                                            <td><a href="#" value="score">Update Score</a></td>
                                             <td><a href="#" value="select">Choose Subject</a></td>
                                             <td>
                                                 <div class="hidden-sm hidden-xs btn-group">
@@ -544,9 +545,9 @@
                                                                 </div>
 
                                                                 <div class="profile-info-row">
-                                                                    <div class="profile-info-name"> Student Class </div>
+                                                                    <div class="profile-info-name"> Student Grade </div>
                                                                     <div class="profile-info-value">
-                                                                        <span><%=student.getStudentGrade()==null?"-":student.getStudentGrade()%></span>
+                                                                        <span><%="-"%></span>
                                                                     </div>
                                                                 </div>
 
@@ -813,9 +814,9 @@
         });
 
         $(".btn-danger").click(function () {
-            var $student = $(this).parent().parent().parent().find('td');
+            var $studentId = $(this).parent().parent().parent().find('td').eq(2).html();
             if(confirm("是否删除该数据？")){
-                window.location.href="http://localhost:8585/std/student/delete.do?studentId="+$student.eq(1).html();
+                window.location.href="http://localhost:8585/std/student/delete.do?studentId="+$studentId;
             }
         });
 
@@ -858,6 +859,13 @@
 
             $studentId = $(this).parent().parent().find('td').eq(2).html();
             $(this).attr("href","http://localhost:8585/std/student/getcourseinfo.do?studentId="+$studentId);
+
+        });
+
+        $("a[value$='score']").click(function(){
+
+            $studentId = $(this).parent().parent().find('td').eq(2).html();
+            $(this).attr("href","http://localhost:8585/std/student/getscoreinfo.do?studentId="+$studentId);
 
         });
     });

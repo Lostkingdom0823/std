@@ -1,6 +1,7 @@
 package com.biz.std.repository;
 
 import com.biz.std.model.CourseSelected;
+import com.biz.std.service.CourseService;
 import com.biz.std.service.StudentService;
 import org.junit.After;
 import org.junit.Before;
@@ -19,6 +20,7 @@ public class SpringDataTest {
     private CourseSelectedRepository courseSelectedRepository =null;
     private CourseOfferedRepository courseOfferedRepository = null;
     private StudentService studentService = null;
+    private CourseService courseService = null;
 
     @Before
     public void setup() {
@@ -27,6 +29,7 @@ public class SpringDataTest {
         courseSelectedRepository = context.getBean(CourseSelectedRepository.class);
         courseOfferedRepository = context.getBean(CourseOfferedRepository.class);
         studentService = context.getBean(StudentService.class);
+        courseService = context.getBean(CourseService.class);
         System.out.println("setup");
     }
 
@@ -63,5 +66,32 @@ public class SpringDataTest {
         while(iterator.hasNext()){
             System.out.println(iterator.next().getCourseName());
         }
+    }
+
+    @Test
+    public void testFindStudentGradeByStudentId(){
+        System.out.println(studentRepository.findStudentGradeByStudentId("111"));
+    }
+
+    @Test
+    public void testGetAvgScoreByStudentId(){
+        System.out.println(courseSelectedRepository.getAvgScoresAndCount("1111").split(",")[1]);
+    }
+
+    @Test
+    public void testGetNumberOfStudentByStudentGrade(){
+        System.out.println(studentRepository.getNumberOfStudentByGradeName("Grade 1 Class 1"));
+    }
+
+    @Test
+    public void testGetNameAndId(){
+        List<String> courseSelecteds = courseSelectedRepository.findStudentIdsByCourseName("Math");
+        System.out .println(courseSelecteds.size());
+        System.out.println(courseSelecteds.get(0));
+    }
+
+    @Test
+    public void testUpdateCourse(){
+        courseService.updateCourseInfo("Math","TEST");
     }
 }

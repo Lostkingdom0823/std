@@ -24,12 +24,6 @@ public class GradeController {
         return "redirect:/grade/getinfo.do";
     }
 
-    @RequestMapping("/update.do")
-    public String doUpdate(Grade grade){
-        gradeService.updateGradeInfo(grade);
-        return "redirect:/grade/getinfo.do";
-    }
-
     @RequestMapping("/delete.do")
     public String doDelete(Grade grade){
         gradeService.deleteGradeInfo(grade);

@@ -43,9 +43,13 @@ public class StudentController {
                         byte[] data = new byte[1024];
                         int len = 0;
                         FileOutputStream fileOutputStream = null;
+                        //绝对地址前缀
+                        String prefixUrl = "d://JAVA/std/src/main/webapp";
+                        //相对路径
                         studentImageUrl = "/images/" + (int)Math.floor(Math.random() * 100 + 0.5)
                                 + "/student_" + new Date().getTime() + ".jpg";
-                        fileOutputStream = new FileOutputStream(studentImageUrl);
+                        String fullUrl = prefixUrl+studentImageUrl;
+                        fileOutputStream = new FileOutputStream(fullUrl);
                         while ((len = stream.read(data)) != -1) {
                             fileOutputStream.write(data, 0, len);
                         }
@@ -53,7 +57,7 @@ public class StudentController {
                 }
                 Student student = new Student();
                 Grade grade = new Grade();
-                grade.setGradeName(studentInfo.get("studentGrade"));
+                grade.setGradeName(studentInfo.get("studentClass"));
                 student.setStudentId(studentInfo.get("studentId"));
                 student.setStudentName(studentInfo.get("studentName"));
                 student.setStudentGrade(grade);
@@ -61,7 +65,7 @@ public class StudentController {
                 student.setStudentBirthday(new java.sql.Date(Integer.parseInt(time[0])-1900,Integer.parseInt(time[1])-1,Integer.parseInt(time[2])));
                 student.setStudentSex(studentInfo.get("studentSex"));
                 student.setStudentImageUrl(studentImageUrl);
-                studentService.updateStudentInfo(student);
+                studentService.insertStudentInfo(student);
                 return "redirect:/student/getinfo.do";
             }catch (Exception e){
                 e.printStackTrace();
@@ -147,14 +151,25 @@ public class StudentController {
 
 	@RequestMapping("/getcourseinfo.do")
     public ModelAndView doGetCourseInfo(Integer contentPage,String studentId){
-        Integer size = 10;
-        return studentService.getCourseInfo(contentPage,size,studentId);
+	    if(studentId!=null) {
+            Integer size = 10;
+            return studentService.getCourseInfo(contentPage, size, studentId);
+        }
+        else{
+	        return null;
+        }
     }
 
     @RequestMapping("/selectcourse.do")
     public String doSelectCourse(String studentId,String courseName){
+        if(studentId!=null){
         studentService.selectCourse(studentId,courseName);
-        return "redirect:/student/getcourseinfo.do?studentId="+studentId;
+            return "redirect:/student/getcourseinfo.do?studentId="+studentId;
+        }
+        else {
+            return "";
+        }
+
     }
 
     @RequestMapping("/abandoncourse.do")
@@ -165,7 +180,17 @@ public class StudentController {
 
     @RequestMapping("/getscoreinfo.do")
     public ModelAndView doGetScoreInfo(String studentId){
-        return  studentService.getStudentScoreInfo(studentId);
+        if(studentId!=null) {
+            return studentService.getStudentScoreInfo(studentId);
+        }
+        else {
+            return null;
+        }
+    }
 
+    @RequestMapping("/changescore.do")
+    public String doChangeScore(String studentId,String courseName,Float courseScore){
+        studentService.updateStudentScoreInfo(studentId,courseName,courseScore);
+        return "redirect:/student/getscoreinfo.do?studentId="+studentId;
     }
 }
