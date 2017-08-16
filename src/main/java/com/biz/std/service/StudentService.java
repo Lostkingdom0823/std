@@ -224,14 +224,12 @@ public class StudentService {
 
         studentInfo.clear();
         studentInfo.setViewName("scoreinfo");
-        studentInfo.addObject("courses",courseSelectedList);
-        studentInfo.addObject("studentId",studentId);
-        return studentInfo;
+        studentInfo.addObject("courseSelected",courseSelectedList);
+        return null;
     }
 
     @Transactional
     public boolean updateStudentScoreInfo(String studentId,String courseName,Float courseScore){
-
         if(courseScore != null) {
 
             CourseSelected courseSelected = courseSelectedRepository.findOne(studentId + courseName);
