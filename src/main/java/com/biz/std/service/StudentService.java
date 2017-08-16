@@ -69,7 +69,7 @@ public class StudentService {
         }
 
     }
-    // TODO: 2017/8/10 外键引入导致的删除顺序问题，需要解决
+    // TODO: 2017/8/10 外键引入导致的删除顺序问题，需要解决，删除学生导致班级平均分变化需要解决
     @Transactional
     public void deleteStudentInfo(String studentId){
         studentRepository.delete(studentId);
