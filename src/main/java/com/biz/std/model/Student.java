@@ -15,6 +15,7 @@ public class Student {
 	private Float avgScore;
 	private String studentImageUrl;
 	private Set<CourseSelected> Courses;
+	private Integer numberOfCourses;
 
 	@Id
 	@Column(length = 40)
@@ -89,4 +90,12 @@ public class Student {
     public void setAvgScore(Float avgScore) {
         this.avgScore = avgScore;
     }
+
+	public Integer getNumberOfCourses() {
+		return numberOfCourses;
+	}
+
+	public void setNumberOfCourses(Integer numberOfCourses) {
+		this.numberOfCourses = numberOfCourses;
+	}
 }

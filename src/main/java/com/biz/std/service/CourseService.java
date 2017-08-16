@@ -76,12 +76,14 @@ public class CourseService {
 
         courseOfferedRepository.save(newCourseOffered);
 
+        //updateCourseInfo会将学生课程分数置零，待修正
         for(String s : studentIds){
             Student student = new Student();
             student.setStudentId(s);
             CourseSelected courseSelected = new CourseSelected();
             courseSelected.setCourseId(s+newCourseName);
             courseSelected.setCourseName(newCourseName);
+            // TODO: 2017/8/16 待修正
             courseSelected.setScore((float)0.0);
             courseSelected.setStudent(student);
             courseSelectedRepository.save(courseSelected);

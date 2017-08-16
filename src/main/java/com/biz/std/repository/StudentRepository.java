@@ -1,5 +1,6 @@
 package com.biz.std.repository;
 
+import com.biz.std.model.Grade;
 import com.biz.std.model.Student;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
@@ -18,4 +19,7 @@ public interface StudentRepository extends PagingAndSortingRepository<Student,St
 
     @Query(value = "SELECT studentId FROM student WHERE gradeName = ?1" ,nativeQuery = true)
     List<String> findStudentIdByGradeName(String gradeName);
+
+    @Query(value = "SELECT avgScore FROM student WHERE gradeName = ?1" ,nativeQuery = true)
+    List<Float> findAvgScoreByGradeName(String gradeName);
 }

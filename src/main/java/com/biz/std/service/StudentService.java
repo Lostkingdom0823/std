@@ -44,18 +44,7 @@ public class StudentService {
 
     @Transactional
     public void insertStudentInfo(Student student){
-        if(!studentRepository.exists(student.getStudentId())) {
-            if (!gradeRepository.exists(student.getStudentGrade().getGradeName())) {
-                Grade grade = student.getStudentGrade();
-                grade.setNumberOfStudents(1);
-                grade.setGradeAvgScore((float)0.0);
-                gradeRepository.save(student.getStudentGrade());
-            }
-            studentRepository.save(student);
-        }
-        else{
-
-        }
+        studentRepository.save(student);
     }
 
     @Transactional
@@ -80,19 +69,16 @@ public class StudentService {
         }
 
     }
-
+    // TODO: 2017/8/10 外键引入导致的删除顺序问题，需要解决
     @Transactional
     public void deleteStudentInfo(String studentId){
-
-        List<CourseSelected> courseSelectedList = courseSelectedRepository.findCourseByStudentId(studentId);
-        courseSelectedRepository.delete(courseSelectedList);
-
         studentRepository.delete(studentId);
     }
 
-    // TODO: 2017/8/12 完善信息展示
     public ModelAndView getStudentsInfo(Integer contentPage, Integer size){
+
         List<Student> students = new ArrayList<Student>();
+        List<String> grades = new ArrayList<String>();
         if(contentPage==null){
             contentPage=1;
         }
@@ -101,10 +87,15 @@ public class StudentService {
         Pageable pageable = new PageRequest(contentPage-1,size,sort);
         Page<Student> page = studentRepository.findAll(pageable);
 
+        for(Student student : page.getContent()){
+            grades.add(studentRepository.findStudentGradeByStudentId(student.getStudentId()));
+        }
+
         studentInfo.clear();
         students.addAll(page.getContent());
         studentInfo.setViewName("studentinfo");
         studentInfo.addObject("students",students);
+        studentInfo.addObject("grades",grades);
         studentInfo.addObject("contentPage",contentPage);
         studentInfo.addObject("maxPage",page.getTotalPages());
         studentInfo.addObject("totalDetails",(int)page.getTotalElements());
@@ -163,17 +154,26 @@ public class StudentService {
         return courseInfo;
     }
 
+    // TODO: 2017/8/15 待添加选课/退课时修改该课人数
     @Transactional
     public boolean selectCourse(String studentId, String courseName) {
         Student student = studentRepository.findOne(studentId);
-        System.out.println(student.getStudentId());
 
+        //初始化选课信息
         CourseSelected courseSelected = new CourseSelected();
         courseSelected.setCourseId(studentId+courseName);
         courseSelected.setCourseName(courseName);
-        courseSelected.setScore((float)0.0);
         courseSelected.setStudent(student);
+        courseSelected.setScore((float)0.0);
 
+        //修改学生课程数
+        Integer numberOfCoursesBefore = courseSelectedRepository.getNumberOfCoursesByStudentId(studentId);
+        student.setNumberOfCourses(numberOfCoursesBefore+1);
+
+        //修改学生平均分
+        student.setAvgScore(student.getAvgScore()*numberOfCoursesBefore/(numberOfCoursesBefore+1));
+
+        //设置外键
         Set<CourseSelected> selectedSet = new HashSet<CourseSelected>();
         selectedSet.add(courseSelected);
         student.setCourses(selectedSet);
@@ -181,9 +181,36 @@ public class StudentService {
         return true;
     }
 
+    // TODO: 2017/8/15 退课涉及的分数改动待完成，退课涉及的课程人数变化待完成
     @Transactional
     public boolean abandonCourse(String studentId, String courseName){
 
+        //退课涉及的平均分改动
+        //学生平均分变化
+        CourseSelected courseSelected = courseSelectedRepository.findOne(studentId+courseName);
+        CourseOffered courseOffered = courseOfferedRepository.findOne(courseName);
+        courseOffered.setNumberOfStudents(courseOffered.getNumberOfStudents() - 1);
+        Student student = studentRepository.findOne(studentId);
+        Float studentAvgScoreBefore = student.getAvgScore();
+        student.setAvgScore((student.getAvgScore() * student.getNumberOfCourses()-courseSelected.getScore())/(student.getNumberOfCourses()-1));
+
+        //班级平均分变化
+        String gradeName = studentRepository.findStudentGradeByStudentId(studentId);
+        List<Float> avgScores = studentRepository.findAvgScoreByGradeName(gradeName);
+        Grade grade = gradeRepository.findOne(gradeName);
+        Float totalScore = student.getAvgScore()-studentAvgScoreBefore;
+        for(Float score : avgScores){
+            totalScore+=score;
+        }
+        grade.setGradeAvgScore(totalScore/avgScores.size());
+        gradeRepository.save(grade);
+
+
+        //课程人数改动
+        student.setNumberOfCourses(student.getNumberOfCourses()-1);
+        studentRepository.save(student);
+
+        //删除选课信息
         courseSelectedRepository.delete(studentId+courseName);
 
         return true;
@@ -205,37 +232,50 @@ public class StudentService {
     @Transactional
     public boolean updateStudentScoreInfo(String studentId,String courseName,Float courseScore){
 
-        Student student = studentRepository.findOne(studentId);
-        String studentGradeName = studentRepository.findStudentGradeByStudentId(studentId);
-        Grade grade = gradeRepository.findOne(studentGradeName);
-        if(student.getAvgScore()==null){
-            student.setAvgScore((float)0.0);
+        if(courseScore != null) {
+
+            CourseSelected courseSelected = courseSelectedRepository.findOne(studentId + courseName);
+            Float oldScore = courseSelected.getScore();
+
+            if(oldScore != courseScore) {
+
+                Student student = studentRepository.findOne(studentId);
+                String studentGradeName = studentRepository.findStudentGradeByStudentId(studentId);
+                Grade grade = gradeRepository.findOne(studentGradeName);
+                if (student.getAvgScore() == null) {
+                    student.setAvgScore((float) 0.0);
+                }
+
+                String[] avgScoreAndCount = courseSelectedRepository.getAvgScoresAndCount(studentId).split(",");
+
+                courseSelected.setStudent(student);
+                courseSelected.setCourseId(studentId + courseName);
+                courseSelected.setScore(courseScore);
+                courseSelected.setCourseName(courseName);
+
+                //计算学生平均分
+                Float scoreChange = courseScore - oldScore;
+                Float avgScoreNow = (scoreChange / Float.valueOf(avgScoreAndCount[1])) + student.getAvgScore();
+                Float avgScoreChange = avgScoreNow - student.getAvgScore();
+                student.setAvgScore(avgScoreNow);
+                student.setStudentGrade(grade);
+
+                //计算班级平均分
+                Float gradeAvgScore = (avgScoreChange / studentRepository.getNumberOfStudentByGradeName(studentGradeName)) + grade.getGradeAvgScore();
+                grade.setGradeAvgScore(gradeAvgScore);
+
+                courseSelectedRepository.save(courseSelected);
+                studentRepository.save(student);
+                gradeRepository.save(grade);
+
+                return true;
+            }
+            else {
+                return false;
+            }
         }
-
-        String[] avgScoreAndCount = courseSelectedRepository.getAvgScoresAndCount(studentId).split(",");
-        CourseSelected courseSelected = courseSelectedRepository.findOne(studentId+courseName);
-        Float oldScore = courseSelected.getScore();
-
-        courseSelected.setStudent(student);
-        courseSelected.setCourseId(studentId+courseName);
-        courseSelected.setScore(courseScore);
-        courseSelected.setCourseName(courseName);
-
-        //计算学生平均分
-        Float scoreChange = courseScore - oldScore;
-        Float avgScoreNow = (scoreChange/Float.valueOf(avgScoreAndCount[0]))+student.getAvgScore();
-        Float avgScoreChange = avgScoreNow - student.getAvgScore();
-        student.setAvgScore(avgScoreNow);
-        student.setStudentGrade(grade);
-
-        //计算班级平均分
-        Float gradeAvgScore = (avgScoreChange/studentRepository.getNumberOfStudentByGradeName(studentGradeName))+grade.getGradeAvgScore();
-        grade.setGradeAvgScore(gradeAvgScore);
-
-        courseSelectedRepository.save(courseSelected);
-        studentRepository.save(student);
-        gradeRepository.save(grade);
-
-        return true;
+        else {
+            return false;
+        }
     }
 }

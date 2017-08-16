@@ -556,6 +556,12 @@
             var url = "http://localhost:8585/std/subject/getinfo.do?contentPage="+$contentPage+"&timestamp="+timeStamp;
             $(this).attr("href",url);
         });
+
+        //返回
+        $("#return").click(function () {
+            $("#infoContent").show();
+            $("#formContent").hide();
+        })
     });
 
 </script>

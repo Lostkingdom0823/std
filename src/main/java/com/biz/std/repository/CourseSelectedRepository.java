@@ -19,4 +19,7 @@ public interface CourseSelectedRepository extends PagingAndSortingRepository<Cou
     @Query(value = "SELECT studentId FROM courseSelected WHERE courseName = ?1",nativeQuery = true)
     List<String> findStudentIdsByCourseName(String courseName);
 
+    @Query(value = "SELECT COUNT(*) FROM courseSelected WHERE studentId=?!",nativeQuery = true)
+    Integer getNumberOfCoursesByStudentId(String studentId);
+
 }
