@@ -5,6 +5,7 @@ import com.biz.std.model.CourseSelected;
 import com.biz.std.model.Student;
 import com.biz.std.repository.CourseOfferedRepository;
 import com.biz.std.repository.CourseSelectedRepository;
+import com.biz.std.repository.GradeRepository;
 import com.biz.std.repository.StudentRepository;
 import com.biz.std.vo.CourseInfo;
 import com.biz.std.vo.StudentInfo;
@@ -36,6 +37,9 @@ public class StudentService {
 
     @Autowired
     private CourseInfo courseInfo;
+
+    @Autowired
+    private GradeRepository gradeRepository;
 
     @Transactional
     public void insertStudentInfo(Student student){
@@ -145,12 +149,12 @@ public class StudentService {
     @Transactional
     public boolean selectCourse(String studentId, String courseName) {
         Student student = studentRepository.findOne(studentId);
-        System.out.println(student.getStudentId());
 
         CourseSelected courseSelected = new CourseSelected();
         courseSelected.setCourseId(studentId+courseName);
         courseSelected.setCourseName(courseName);
         courseSelected.setStudent(student);
+        courseSelected.setScore((float)0.0);
 
         Set<CourseSelected> selectedSet = new HashSet<CourseSelected>();
         selectedSet.add(courseSelected);
@@ -193,8 +197,10 @@ public class StudentService {
                 break;
             }
         }
+        student.setAvgScore(courseSelectedRepository.getAverageScoreByStudentId(studentId));
 
-        //// TODO: 2017/8/11 完善分数修改，完成分数修改界面，绑定相关逻辑
+        // TODO: 2017/8/11 完善分数修改，完成分数修改界面，绑定相关逻辑
+        // TODO: 2017/8/11 寻找能获取Grade主键的方法
 
         return true;
     }

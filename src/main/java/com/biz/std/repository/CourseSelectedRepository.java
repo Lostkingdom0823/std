@@ -13,7 +13,8 @@ public interface CourseSelectedRepository extends PagingAndSortingRepository<Cou
     List<CourseSelected> findCourseByStudentId(String studentId);
 
     //
-    @Query(value = "SELECT score FROM courseSelected WHERE studentId = ?1",nativeQuery = true)
-    List<String> getAllScores(String studentId);
+    @Query(value = "SELECT AVG(score) FROM courseSelected WHERE studentId = ?1",nativeQuery = true)
+    //List<String> getAllScores(String studentId);
+    Float getAverageScoreByStudentId(String studentId);
 
 }
