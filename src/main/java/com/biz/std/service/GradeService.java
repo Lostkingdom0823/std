@@ -48,7 +48,7 @@ public class GradeService {
 
         List<Grade> grades = new ArrayList<Grade>();
 
-        Sort.Order order = new Sort.Order(Sort.Direction.ASC,"className");
+        Sort.Order order = new Sort.Order(Sort.Direction.ASC,"gradeName");
         Sort sort = new Sort(order);
         Pageable pageable = new PageRequest(contentPage-1,size,sort);
         Page<Grade> page = gradeRepository.findAll(pageable);

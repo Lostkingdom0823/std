@@ -5,6 +5,7 @@ import com.biz.std.model.CourseSelected;
 import com.biz.std.model.Student;
 import com.biz.std.repository.CourseOfferedRepository;
 import com.biz.std.repository.CourseSelectedRepository;
+import com.biz.std.repository.StudentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -14,7 +15,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class CourseService {
@@ -24,6 +27,9 @@ public class CourseService {
 
     @Autowired
     private CourseSelectedRepository courseSelectedRepository;
+
+    @Autowired
+    private StudentRepository studentRepository;
 
     public ModelAndView getCourseInfo(Integer contentPage,Integer size){
 
@@ -69,33 +75,35 @@ public class CourseService {
 
         CourseOffered courseOffered = courseOfferedRepository.findOne(oldCourseName);
         List<String> studentIds = courseSelectedRepository.findStudentIdsByCourseName(oldCourseName);
+        List<Student> students = new ArrayList<Student>();
+
         CourseOffered newCourseOffered = new CourseOffered();
         newCourseOffered.setCourseName(newCourseName);
         newCourseOffered.setAvgScore(courseOffered.getAvgScore());
         newCourseOffered.setNumberOfStudents(courseOffered.getNumberOfStudents());
 
-        courseOfferedRepository.save(newCourseOffered);
-
-        //updateCourseInfo会将学生课程分数置零，待修正
-        for(String s : studentIds){
-            Student student = new Student();
-            student.setStudentId(s);
-            CourseSelected courseSelected = new CourseSelected();
-            courseSelected.setCourseId(s+newCourseName);
+        for(String studentId : studentIds){
+            Set<CourseSelected> courseSelectedSet = new HashSet<CourseSelected>();
+            Student student = studentRepository.findOne(studentId);
+            CourseSelected courseSelected = courseSelectedRepository.findOne(studentId+oldCourseName);
             courseSelected.setCourseName(newCourseName);
-            // TODO: 2017/8/16 待修正
-            courseSelected.setScore((float)0.0);
-            courseSelected.setStudent(student);
-            courseSelectedRepository.save(courseSelected);
-            if(courseSelectedRepository.exists(s+newCourseName)){
-                courseSelectedRepository.delete(s+oldCourseName);
-            }
+            courseSelected.setCourseId(studentId+newCourseName);
+            courseSelectedSet.add(courseSelected);
+            student.setCourses(courseSelectedSet);
+            students.add(student);
         }
+
+        studentRepository.save(students);
+        courseSelectedRepository.deleteCourseSelectedByCourseName(oldCourseName);
+        courseOfferedRepository.save(newCourseOffered);
 
         if(courseOfferedRepository.exists(newCourseName)){
             courseOfferedRepository.delete(oldCourseName);
         }
+        return true;
+    }
 
+    public boolean deleteCourseInfo(String courseName){
         return true;
     }
 }

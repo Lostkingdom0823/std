@@ -43,15 +43,42 @@ public class StudentService {
     private GradeRepository gradeRepository;
 
     @Transactional
-    public void insertStudentInfo(Student student){
-        studentRepository.save(student);
+    public boolean insertStudentInfo(Student student){
+        //判断是否已有学生的信息
+        if(!studentRepository.exists(student.getStudentId())) {
+            //新建学生信息导致的班级平均分变化
+            Grade grade;
+            if(!gradeRepository.exists(student.getStudentGrade().getGradeName())) {
+                grade = student.getStudentGrade();
+                grade.setNumberOfStudents(1);
+                grade.setGradeAvgScore((float)0.0);
+            }
+            else{
+                grade = gradeRepository.findOne(student.getStudentGrade().getGradeName());
+                grade.setGradeAvgScore(grade.getNumberOfStudents()*grade.getGradeAvgScore()/(grade.getNumberOfStudents()+1));
+                grade.setNumberOfStudents(grade.getNumberOfStudents()+1);
+            }
+
+            student.setAvgScore((float)0);
+            student.setNumberOfCourses(0);
+            Set<Student> students = new HashSet<Student>();
+            students.add(student);
+            grade.setStudents(students);
+            student.setStudentGrade(grade);
+
+            gradeRepository.save(grade);
+            return true;
+        }
+        return false;
     }
 
     @Transactional
     public boolean updateStudentInfo(Student student){
         String prefixUrl = "d://JAVA/std/src/main/webapp";
+        //判断是否有该学生信息
         if(studentRepository.exists(student.getStudentId())){
             Student temp = studentRepository.findOne(student.getStudentId());
+            //图片上传需对原图片删除
             if(student.getStudentImageUrl()!=null) {
                 if (temp.getStudentImageUrl()!=null && !temp.getStudentImageUrl().equals("")) {
                     File file = new File(prefixUrl + temp.getStudentImageUrl());
@@ -61,6 +88,35 @@ public class StudentService {
             else{
                 student.setStudentImageUrl(temp.getStudentImageUrl());
             }
+
+            //班级信息改动导致平均分变化
+            Grade oldGrade = gradeRepository.findOne(studentRepository.findStudentGradeByStudentId(temp.getStudentId()));
+            if(student.getStudentGrade().getGradeName()!=oldGrade.getGradeName()){
+                if(oldGrade.getNumberOfStudents()!=1) {
+                    oldGrade.setGradeAvgScore((oldGrade.getNumberOfStudents() * oldGrade.getGradeAvgScore() - temp.getNumberOfCourses() * temp.getAvgScore()) / oldGrade.getNumberOfStudents() - 1);
+                    oldGrade.setNumberOfStudents(oldGrade.getNumberOfStudents()-1);
+                }
+                else{
+                    oldGrade.setGradeAvgScore((float)0.0);
+                    oldGrade.setNumberOfStudents(0);
+                }
+            }
+
+            Grade newGrade = new Grade();
+            if(gradeRepository.exists(student.getStudentGrade().getGradeName())){
+                newGrade = gradeRepository.findOne(student.getStudentGrade().getGradeName());
+                newGrade.setGradeAvgScore((newGrade.getNumberOfStudents() * newGrade.getGradeAvgScore() + temp.getNumberOfCourses() * temp.getAvgScore()) / (newGrade.getNumberOfStudents()+1));
+                newGrade.setNumberOfStudents(newGrade.getNumberOfStudents()+1);
+            }
+            else {
+                newGrade = student.getStudentGrade();
+                newGrade.setGradeAvgScore(temp.getAvgScore() * temp.getNumberOfCourses());
+                newGrade.setNumberOfStudents(1);
+            }
+
+            gradeRepository.save(oldGrade);
+
+            student.setStudentGrade(newGrade);
             studentRepository.save(student);
             return true;
         }
@@ -72,7 +128,23 @@ public class StudentService {
     // TODO: 2017/8/10 外键引入导致的删除顺序问题，需要解决，删除学生导致班级平均分变化需要解决
     @Transactional
     public void deleteStudentInfo(String studentId){
+        Student student = studentRepository.findOne(studentId);
+        List<CourseSelected> coursesSelected = courseSelectedRepository.findCourseByStudentId(studentId);
+        Grade grade = gradeRepository.findOne(studentRepository.findStudentGradeByStudentId(studentId));
+
+        //学生信息删除导致平均分变化
+        if(grade.getNumberOfStudents()!=1) {
+            grade.setGradeAvgScore((grade.getNumberOfStudents() * grade.getGradeAvgScore() - student.getNumberOfCourses() * student.getAvgScore()) / grade.getNumberOfStudents() - 1);
+            grade.setNumberOfStudents(grade.getNumberOfStudents()-1);
+        }
+        else{
+            grade.setGradeAvgScore((float)0.0);
+            grade.setNumberOfStudents(0);
+        }
+
+        courseSelectedRepository.delete(coursesSelected);
         studentRepository.delete(studentId);
+        gradeRepository.save(grade);
     }
 
     public ModelAndView getStudentsInfo(Integer contentPage, Integer size){
@@ -123,7 +195,7 @@ public class StudentService {
 
         //获取学生已选课程信息
         List<String> coursesSelected = new ArrayList<String>();
-        coursesSelected.addAll(studentRepository.findCourseSelectedByStudentId(studentId));
+        coursesSelected.addAll(courseSelectedRepository.findCourseSelectedByStudentId(studentId));
         Iterator<CourseOffered> pageIterator = page.iterator();
 
         //设置标记 PS:感觉好蠢_(:з」∠)_
@@ -158,6 +230,13 @@ public class StudentService {
     @Transactional
     public boolean selectCourse(String studentId, String courseName) {
         Student student = studentRepository.findOne(studentId);
+        CourseOffered courseOffered = courseOfferedRepository.findOne(courseName);
+
+        //该课平均分变化
+        courseOffered.setAvgScore(courseOffered.getAvgScore()*courseOffered.getNumberOfStudents()/(courseOffered.getNumberOfStudents()+1));
+
+        //课程人数变化
+        courseOffered.setNumberOfStudents(courseOffered.getNumberOfStudents()+1);
 
         //初始化选课信息
         CourseSelected courseSelected = new CourseSelected();
@@ -166,17 +245,18 @@ public class StudentService {
         courseSelected.setStudent(student);
         courseSelected.setScore((float)0.0);
 
-        //修改学生课程数
-        Integer numberOfCoursesBefore = courseSelectedRepository.getNumberOfCoursesByStudentId(studentId);
-        student.setNumberOfCourses(numberOfCoursesBefore+1);
-
         //修改学生平均分
-        student.setAvgScore(student.getAvgScore()*numberOfCoursesBefore/(numberOfCoursesBefore+1));
+        student.setAvgScore(student.getAvgScore()*student.getNumberOfCourses()/(student.getNumberOfCourses()+1));
+
+        //修改学生课程数
+        student.setNumberOfCourses(student.getNumberOfCourses()+1);
 
         //设置外键
         Set<CourseSelected> selectedSet = new HashSet<CourseSelected>();
         selectedSet.add(courseSelected);
         student.setCourses(selectedSet);
+
+        courseOfferedRepository.save(courseOffered);
         studentRepository.save(student);
         return true;
     }
@@ -185,30 +265,36 @@ public class StudentService {
     @Transactional
     public boolean abandonCourse(String studentId, String courseName){
 
-        //退课涉及的平均分改动
-        //学生平均分变化
         CourseSelected courseSelected = courseSelectedRepository.findOne(studentId+courseName);
         CourseOffered courseOffered = courseOfferedRepository.findOne(courseName);
-        courseOffered.setNumberOfStudents(courseOffered.getNumberOfStudents() - 1);
         Student student = studentRepository.findOne(studentId);
-        Float studentAvgScoreBefore = student.getAvgScore();
-        student.setAvgScore((student.getAvgScore() * student.getNumberOfCourses()-courseSelected.getScore())/(student.getNumberOfCourses()-1));
+        Grade grade = gradeRepository.findOne(studentRepository.findStudentGradeByStudentId(studentId));
 
-        //班级平均分变化
-        String gradeName = studentRepository.findStudentGradeByStudentId(studentId);
-        List<Float> avgScores = studentRepository.findAvgScoreByGradeName(gradeName);
-        Grade grade = gradeRepository.findOne(gradeName);
-        Float totalScore = student.getAvgScore()-studentAvgScoreBefore;
-        for(Float score : avgScores){
-            totalScore+=score;
+        //退课涉及的该课平均分变化
+        if(courseOffered.getNumberOfStudents()!=1){
+            courseOffered.setAvgScore((courseOffered.getAvgScore() * courseOffered.getNumberOfStudents()-courseSelected.getScore())/courseOffered.getNumberOfStudents()-1);
+            courseOffered.setNumberOfStudents(courseOffered.getNumberOfStudents() - 1);
         }
-        grade.setGradeAvgScore(totalScore/avgScores.size());
+        else {
+            courseOffered.setAvgScore((float)0);
+            courseOffered.setNumberOfStudents(0);
+        }
+
+        //学生平均分变化及课程数变化
+        if(student.getNumberOfCourses()!=1) {
+            student.setAvgScore((student.getAvgScore() * student.getNumberOfCourses() - courseSelected.getScore()) / (student.getNumberOfCourses() - 1));
+            student.setNumberOfCourses(student.getNumberOfCourses() - 1);
+        }
+        else {
+            student.setAvgScore((float)0.0);
+            student.setNumberOfCourses(0);
+        }
+        //班级平均分变化
+        grade.setGradeAvgScore((grade.getGradeAvgScore() * grade.getNumberOfStudents() - courseSelected.getScore())/grade.getNumberOfStudents());
+
         gradeRepository.save(grade);
-
-
-        //课程人数改动
-        student.setNumberOfCourses(student.getNumberOfCourses()-1);
         studentRepository.save(student);
+        courseOfferedRepository.save(courseOffered);
 
         //删除选课信息
         courseSelectedRepository.delete(studentId+courseName);
@@ -234,14 +320,14 @@ public class StudentService {
 
         if(courseScore != null) {
 
+            CourseOffered courseOffered = courseOfferedRepository.findOne(courseName);
             CourseSelected courseSelected = courseSelectedRepository.findOne(studentId + courseName);
-            Float oldScore = courseSelected.getScore();
+            Student student = studentRepository.findOne(studentId);
+            Grade grade = gradeRepository.findOne(studentRepository.findStudentGradeByStudentId(studentId));
 
+            Float oldScore = courseSelected.getScore();
             if(oldScore != courseScore) {
 
-                Student student = studentRepository.findOne(studentId);
-                String studentGradeName = studentRepository.findStudentGradeByStudentId(studentId);
-                Grade grade = gradeRepository.findOne(studentGradeName);
                 if (student.getAvgScore() == null) {
                     student.setAvgScore((float) 0.0);
                 }
@@ -258,12 +344,15 @@ public class StudentService {
                 Float avgScoreNow = (scoreChange / Float.valueOf(avgScoreAndCount[1])) + student.getAvgScore();
                 Float avgScoreChange = avgScoreNow - student.getAvgScore();
                 student.setAvgScore(avgScoreNow);
-                student.setStudentGrade(grade);
 
                 //计算班级平均分
-                Float gradeAvgScore = (avgScoreChange / studentRepository.getNumberOfStudentByGradeName(studentGradeName)) + grade.getGradeAvgScore();
+                Float gradeAvgScore = ((grade.getGradeAvgScore()*grade.getNumberOfStudents()+scoreChange) / grade.getNumberOfStudents());
                 grade.setGradeAvgScore(gradeAvgScore);
 
+                //该课平均分变化
+                courseOffered.setAvgScore((courseOffered.getAvgScore() * courseOffered.getNumberOfStudents()+scoreChange)/courseOffered.getNumberOfStudents());
+
+                courseOfferedRepository.save(courseOffered);
                 courseSelectedRepository.save(courseSelected);
                 studentRepository.save(student);
                 gradeRepository.save(grade);

@@ -45,11 +45,6 @@ public class SpringDataTest {
     }
 
     @Test
-    public void testFindByStudentId(){
-        System.out.println(studentRepository.findCourseSelectedByStudentId("111").size());
-    }
-
-    @Test
     public void testStudentCourseSave(){
         studentService.selectCourse("111","Chemistry");
     }
@@ -80,7 +75,7 @@ public class SpringDataTest {
 
     @Test
     public void testGetNumberOfStudentByStudentGrade(){
-        System.out.println(studentRepository.getNumberOfStudentByGradeName("Grade 1 Class 1"));
+        System.out.println(studentRepository.findStudentsByGradeName("Grade 1 Class 1"));
     }
 
     @Test

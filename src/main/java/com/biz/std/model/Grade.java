@@ -14,7 +14,6 @@ public class Grade {
 
     @Id
     @Column(length = 20)
-
     public String getGradeName() {
 
         return gradeName;

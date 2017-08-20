@@ -51,7 +51,6 @@
 <%!
     List<Student> students = new ArrayList<>();
     List<String> grades = new ArrayList<>();
-    Integer coursesInLearning = 0;
     Integer contentPage = 1;
     Integer maxPage = 1;
     Integer count = 0;
@@ -443,7 +442,9 @@
                                         if(request.getAttribute("students")!=null){
                                             students = (List<Student>) request.getAttribute("students");
                                         }
-                                        students.size();
+                                        if(request.getAttribute("grades")!=null){
+                                            grades = (List<String>) request.getAttribute("grades");
+                                        }
                                         maxPage = (Integer) request.getAttribute("maxPage");
                                         contentPage=(Integer) request.getAttribute("contentPage");
                                         totalDetails=(Integer) request.getAttribute("totalDetails");
@@ -547,7 +548,7 @@
                                                                 <div class="profile-info-row">
                                                                     <div class="profile-info-name"> Student Grade </div>
                                                                     <div class="profile-info-value">
-                                                                        <span><%=grades[count-1]%></span>
+                                                                        <span><%=grades.get(count-1)%></span>
                                                                     </div>
                                                                 </div>
 
