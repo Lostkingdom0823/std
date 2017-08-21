@@ -31,8 +31,9 @@ public class CourseController {
     }
 
     @RequestMapping("/delete.do")
-    public String doDelete(){
-        return "";
+    public String doDelete(String courseName){
+        courseService.deleteCourseInfo(courseName);
+        return "redirect:/course/getinfo.do";
     }
 
     @RequestMapping("/getinfo.do")

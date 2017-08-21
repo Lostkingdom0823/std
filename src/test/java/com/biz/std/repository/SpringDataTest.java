@@ -65,7 +65,7 @@ public class SpringDataTest {
 
     @Test
     public void testFindStudentGradeByStudentId(){
-        System.out.println(studentRepository.findStudentGradeByStudentId("111"));
+        System.out.println(studentRepository.getStudentGradeByStudentId("111"));
     }
 
     @Test

@@ -90,7 +90,7 @@ public class StudentService {
             }
 
             //班级信息改动导致平均分变化
-            Grade oldGrade = gradeRepository.findOne(studentRepository.findStudentGradeByStudentId(temp.getStudentId()));
+            Grade oldGrade = gradeRepository.findOne(studentRepository.getStudentGradeByStudentId(temp.getStudentId()));
             if(student.getStudentGrade().getGradeName()!=oldGrade.getGradeName()){
                 if(oldGrade.getNumberOfStudents()!=1) {
                     oldGrade.setGradeAvgScore((oldGrade.getNumberOfStudents() * oldGrade.getGradeAvgScore() - temp.getNumberOfCourses() * temp.getAvgScore()) / oldGrade.getNumberOfStudents() - 1);
@@ -130,7 +130,7 @@ public class StudentService {
     public void deleteStudentInfo(String studentId){
         Student student = studentRepository.findOne(studentId);
         List<CourseSelected> coursesSelected = courseSelectedRepository.findCourseByStudentId(studentId);
-        Grade grade = gradeRepository.findOne(studentRepository.findStudentGradeByStudentId(studentId));
+        Grade grade = gradeRepository.findOne(studentRepository.getStudentGradeByStudentId(studentId));
 
         //学生信息删除导致平均分变化
         if(grade.getNumberOfStudents()!=1) {
@@ -160,7 +160,7 @@ public class StudentService {
         Page<Student> page = studentRepository.findAll(pageable);
 
         for(Student student : page.getContent()){
-            grades.add(studentRepository.findStudentGradeByStudentId(student.getStudentId()));
+            grades.add(studentRepository.getStudentGradeByStudentId(student.getStudentId()));
         }
 
         studentInfo.clear();
@@ -268,7 +268,7 @@ public class StudentService {
         CourseSelected courseSelected = courseSelectedRepository.findOne(studentId+courseName);
         CourseOffered courseOffered = courseOfferedRepository.findOne(courseName);
         Student student = studentRepository.findOne(studentId);
-        Grade grade = gradeRepository.findOne(studentRepository.findStudentGradeByStudentId(studentId));
+        Grade grade = gradeRepository.findOne(studentRepository.getStudentGradeByStudentId(studentId));
 
         //退课涉及的该课平均分变化
         if(courseOffered.getNumberOfStudents()!=1){
@@ -323,7 +323,7 @@ public class StudentService {
             CourseOffered courseOffered = courseOfferedRepository.findOne(courseName);
             CourseSelected courseSelected = courseSelectedRepository.findOne(studentId + courseName);
             Student student = studentRepository.findOne(studentId);
-            Grade grade = gradeRepository.findOne(studentRepository.findStudentGradeByStudentId(studentId));
+            Grade grade = gradeRepository.findOne(studentRepository.getStudentGradeByStudentId(studentId));
 
             Float oldScore = courseSelected.getScore();
             if(oldScore != courseScore) {

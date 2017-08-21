@@ -5,6 +5,7 @@ import com.biz.std.model.CourseSelected;
 import com.biz.std.model.Student;
 import com.biz.std.repository.CourseOfferedRepository;
 import com.biz.std.repository.CourseSelectedRepository;
+import com.biz.std.repository.GradeRepository;
 import com.biz.std.repository.StudentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -30,6 +31,12 @@ public class CourseService {
 
     @Autowired
     private StudentRepository studentRepository;
+
+    @Autowired
+    private GradeRepository gradeRepository;
+
+    @Autowired
+    private StudentService studentService;
 
     public ModelAndView getCourseInfo(Integer contentPage,Integer size){
 
@@ -104,6 +111,14 @@ public class CourseService {
     }
 
     public boolean deleteCourseInfo(String courseName){
+        List<String> studentIds = courseSelectedRepository.findStudentIdsByCourseName(courseName);
+
+        for(String studentId : studentIds){
+            studentService.abandonCourse(studentId,courseName);
+        }
+
+        courseOfferedRepository.delete(courseName);
+
         return true;
     }
 }
