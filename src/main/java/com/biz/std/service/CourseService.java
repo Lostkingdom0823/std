@@ -33,9 +33,6 @@ public class CourseService {
     private StudentRepository studentRepository;
 
     @Autowired
-    private GradeRepository gradeRepository;
-
-    @Autowired
     private StudentService studentService;
 
     public ModelAndView getCourseInfo(Integer contentPage,Integer size){

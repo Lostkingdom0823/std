@@ -570,7 +570,6 @@
 
                                                                 <div class="profile-info-row">
                                                                     <div class="profile-info-name"> Subjects in Learning </div>
-                                                                        <!--todo  完成课程相关信息  -->
                                                                     <div class="profile-info-value">
                                                                         <span><%=student.getNumberOfCourses()%></span>
                                                                     </div>
@@ -742,13 +741,13 @@
 								</button>
 
 								&nbsp; &nbsp; &nbsp;
-								<button class="btn" type="reset">
+								<button class="btn" type="button" id="reset">
 									<i class="ace-icon fa fa-undo bigger-110"></i>
 									Reset
 								</button>
 								
 								&nbsp; &nbsp; &nbsp;
-								<button class="btn btn-warning" type="reset" id="return">
+								<button class="btn btn-warning" type="button" id="return">
 									<i class="ace-icon fa fa-arrow-left bigger-110"></i>
 									Back
 								</button>
@@ -826,6 +825,22 @@
             var timeStamp=new Date().getTime();
             var url = "http://localhost:8585/std/student/getinfo.do?contentPage="+$contentPage+"&timestamp="+timeStamp;
             $(this).attr("href",url);
+        });
+
+        $("#reset").click(function(){
+           var studentId = $("#studentId").val();
+           console.log(studentId);
+           var inputs = $("#form").find('input');
+           var selects = $("#form").find('select');
+           console.log(inputs.size());
+           inputs.each(function () {
+               $(this).val("");
+           });
+           selects.each(function () {
+               $(this).val("");
+           });
+           console.log(studentId);
+           $("#studentId").val(studentId);
         });
 
         $("#submit").click(function () {

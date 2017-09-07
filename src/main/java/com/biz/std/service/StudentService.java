@@ -85,15 +85,19 @@ public class StudentService {
                     file.delete();
                 }
             }
-            else{
+            else {
                 student.setStudentImageUrl(temp.getStudentImageUrl());
             }
+
+            //防止信息覆盖
+            student.setAvgScore(temp.getAvgScore());
+            student.setNumberOfCourses(temp.getNumberOfCourses());
 
             //班级信息改动导致平均分变化
             Grade oldGrade = gradeRepository.findOne(studentRepository.getStudentGradeByStudentId(temp.getStudentId()));
             if(student.getStudentGrade().getGradeName()!=oldGrade.getGradeName()){
                 if(oldGrade.getNumberOfStudents()!=1) {
-                    oldGrade.setGradeAvgScore((oldGrade.getNumberOfStudents() * oldGrade.getGradeAvgScore() - temp.getNumberOfCourses() * temp.getAvgScore()) / oldGrade.getNumberOfStudents() - 1);
+                    oldGrade.setGradeAvgScore((oldGrade.getNumberOfStudents() * oldGrade.getGradeAvgScore() - temp.getNumberOfCourses() * temp.getAvgScore()) / (oldGrade.getNumberOfStudents() - 1));
                     oldGrade.setNumberOfStudents(oldGrade.getNumberOfStudents()-1);
                 }
                 else{
@@ -102,7 +106,7 @@ public class StudentService {
                 }
             }
 
-            Grade newGrade = new Grade();
+            Grade newGrade;
             if(gradeRepository.exists(student.getStudentGrade().getGradeName())){
                 newGrade = gradeRepository.findOne(student.getStudentGrade().getGradeName());
                 newGrade.setGradeAvgScore((newGrade.getNumberOfStudents() * newGrade.getGradeAvgScore() + temp.getNumberOfCourses() * temp.getAvgScore()) / (newGrade.getNumberOfStudents()+1));
@@ -115,6 +119,7 @@ public class StudentService {
             }
 
             gradeRepository.save(oldGrade);
+            gradeRepository.save(newGrade);
 
             student.setStudentGrade(newGrade);
             studentRepository.save(student);
@@ -131,10 +136,11 @@ public class StudentService {
         Student student = studentRepository.findOne(studentId);
         List<CourseSelected> coursesSelected = courseSelectedRepository.findCourseByStudentId(studentId);
         Grade grade = gradeRepository.findOne(studentRepository.getStudentGradeByStudentId(studentId));
+        List<String> courseNames = courseSelectedRepository.findCourseSelectedByStudentId(studentId);
 
-        //学生信息删除导致平均分变化
+        //学生信息删除导致班级平均分变化
         if(grade.getNumberOfStudents()!=1) {
-            grade.setGradeAvgScore((grade.getNumberOfStudents() * grade.getGradeAvgScore() - student.getNumberOfCourses() * student.getAvgScore()) / grade.getNumberOfStudents() - 1);
+            grade.setGradeAvgScore((grade.getNumberOfStudents() * grade.getGradeAvgScore() - student.getNumberOfCourses() * student.getAvgScore()) / (grade.getNumberOfStudents() - 1));
             grade.setNumberOfStudents(grade.getNumberOfStudents()-1);
         }
         else{
@@ -142,7 +148,19 @@ public class StudentService {
             grade.setNumberOfStudents(0);
         }
 
-        courseSelectedRepository.delete(coursesSelected);
+        //学生信息删除导致其所选课程分数变化
+        for(CourseSelected courseSelected : coursesSelected){
+            CourseOffered courseOffered = courseOfferedRepository.findOne(courseSelected.getCourseName());
+            if(courseOffered.getNumberOfStudents()!=1){
+                courseOffered.setAvgScore((courseOffered.getAvgScore() * courseOffered.getNumberOfStudents()-courseSelected.getScore())/(courseOffered.getNumberOfStudents()-1));
+                courseOffered.setNumberOfStudents(courseOffered.getNumberOfStudents() - 1);
+            }
+            else {
+                courseOffered.setAvgScore((float)0);
+                courseOffered.setNumberOfStudents(0);
+            }
+        }
+
         studentRepository.delete(studentId);
         gradeRepository.save(grade);
     }
@@ -261,7 +279,6 @@ public class StudentService {
         return true;
     }
 
-    // TODO: 2017/8/15 退课涉及的分数改动待完成，退课涉及的课程人数变化待完成
     @Transactional
     public boolean abandonCourse(String studentId, String courseName){
 
@@ -272,7 +289,7 @@ public class StudentService {
 
         //退课涉及的该课平均分变化
         if(courseOffered.getNumberOfStudents()!=1){
-            courseOffered.setAvgScore((courseOffered.getAvgScore() * courseOffered.getNumberOfStudents()-courseSelected.getScore())/courseOffered.getNumberOfStudents()-1);
+            courseOffered.setAvgScore((courseOffered.getAvgScore() * courseOffered.getNumberOfStudents()-courseSelected.getScore())/(courseOffered.getNumberOfStudents()-1));
             courseOffered.setNumberOfStudents(courseOffered.getNumberOfStudents() - 1);
         }
         else {

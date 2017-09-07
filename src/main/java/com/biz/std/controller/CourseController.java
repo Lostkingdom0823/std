@@ -15,8 +15,8 @@ public class CourseController {
     private CourseService courseService;
 
     @RequestMapping("/insert.do")
-    public String doInsert(String courseName){
-        if(courseService.insertCourseInfo(courseName)) {
+    public String doInsert(String newCourseName){
+        if(courseService.insertCourseInfo(newCourseName)) {
             return "redirect:/course/getinfo.do";
         }
         else {
