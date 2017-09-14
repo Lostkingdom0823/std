@@ -8,6 +8,7 @@ import com.biz.std.repository.CourseOfferedRepository;
 import com.biz.std.repository.CourseSelectedRepository;
 import com.biz.std.repository.GradeRepository;
 import com.biz.std.repository.StudentRepository;
+import com.biz.std.util.HostLink;
 import com.biz.std.vo.CourseInfo;
 import com.biz.std.vo.StudentInfo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +43,9 @@ public class StudentService {
     @Autowired
     private GradeRepository gradeRepository;
 
+    @Autowired
+    private HostLink hostLink;
+
     @Transactional
     public boolean insertStudentInfo(Student student){
         //判断是否已有学生的信息
@@ -74,7 +78,7 @@ public class StudentService {
 
     @Transactional
     public boolean updateStudentInfo(Student student){
-        String prefixUrl = "d://JAVA/std/src/main/webapp";
+        String prefixUrl = hostLink.getPrefixUrl();
         //判断是否有该学生信息
         if(studentRepository.exists(student.getStudentId())){
             Student temp = studentRepository.findOne(student.getStudentId());
@@ -130,39 +134,42 @@ public class StudentService {
         }
 
     }
-    // TODO: 2017/8/10 外键引入导致的删除顺序问题，需要解决，删除学生导致班级平均分变化需要解决
     @Transactional
-    public void deleteStudentInfo(String studentId){
-        Student student = studentRepository.findOne(studentId);
-        List<CourseSelected> coursesSelected = courseSelectedRepository.findCourseByStudentId(studentId);
-        Grade grade = gradeRepository.findOne(studentRepository.getStudentGradeByStudentId(studentId));
-        List<String> courseNames = courseSelectedRepository.findCourseSelectedByStudentId(studentId);
+    public Boolean deleteStudentInfo(String studentId){
+        if(studentRepository.exists(studentId)) {
+            Student student = studentRepository.findOne(studentId);
+            List<CourseSelected> coursesSelected = courseSelectedRepository.findCourseByStudentId(studentId);
+            Grade grade = gradeRepository.findOne(studentRepository.getStudentGradeByStudentId(studentId));
+            List<String> courseNames = courseSelectedRepository.findCourseSelectedByStudentId(studentId);
 
-        //学生信息删除导致班级平均分变化
-        if(grade.getNumberOfStudents()!=1) {
-            grade.setGradeAvgScore((grade.getNumberOfStudents() * grade.getGradeAvgScore() - student.getNumberOfCourses() * student.getAvgScore()) / (grade.getNumberOfStudents() - 1));
-            grade.setNumberOfStudents(grade.getNumberOfStudents()-1);
+            //学生信息删除导致班级平均分变化
+            if (grade.getNumberOfStudents() != 1) {
+                grade.setGradeAvgScore((grade.getNumberOfStudents() * grade.getGradeAvgScore() - student.getNumberOfCourses() * student.getAvgScore()) / (grade.getNumberOfStudents() - 1));
+                grade.setNumberOfStudents(grade.getNumberOfStudents() - 1);
+            } else {
+                grade.setGradeAvgScore((float) 0.0);
+                grade.setNumberOfStudents(0);
+            }
+
+            //学生信息删除导致其所选课程分数变化
+            for (CourseSelected courseSelected : coursesSelected) {
+                CourseOffered courseOffered = courseOfferedRepository.findOne(courseSelected.getCourseName());
+                if (courseOffered.getNumberOfStudents() != 1) {
+                    courseOffered.setAvgScore((courseOffered.getAvgScore() * courseOffered.getNumberOfStudents() - courseSelected.getScore()) / (courseOffered.getNumberOfStudents() - 1));
+                    courseOffered.setNumberOfStudents(courseOffered.getNumberOfStudents() - 1);
+                } else {
+                    courseOffered.setAvgScore((float) 0);
+                    courseOffered.setNumberOfStudents(0);
+                }
+            }
+
+            studentRepository.delete(studentId);
+            gradeRepository.save(grade);
+            return true;
         }
         else{
-            grade.setGradeAvgScore((float)0.0);
-            grade.setNumberOfStudents(0);
+            return false;
         }
-
-        //学生信息删除导致其所选课程分数变化
-        for(CourseSelected courseSelected : coursesSelected){
-            CourseOffered courseOffered = courseOfferedRepository.findOne(courseSelected.getCourseName());
-            if(courseOffered.getNumberOfStudents()!=1){
-                courseOffered.setAvgScore((courseOffered.getAvgScore() * courseOffered.getNumberOfStudents()-courseSelected.getScore())/(courseOffered.getNumberOfStudents()-1));
-                courseOffered.setNumberOfStudents(courseOffered.getNumberOfStudents() - 1);
-            }
-            else {
-                courseOffered.setAvgScore((float)0);
-                courseOffered.setNumberOfStudents(0);
-            }
-        }
-
-        studentRepository.delete(studentId);
-        gradeRepository.save(grade);
     }
 
     public ModelAndView getStudentsInfo(Integer contentPage, Integer size){

@@ -20,20 +20,28 @@ public class CourseController {
             return "redirect:/course/getinfo.do";
         }
         else {
-            return "";
+            return "error";
         }
     }
 
     @RequestMapping("/update.do")
     public String doUpdate(String oldCourseName,String newCourseName){
-        courseService.updateCourseInfo(oldCourseName,newCourseName);
-        return "redirect:/course/getinfo.do";
+        if(courseService.updateCourseInfo(oldCourseName,newCourseName)) {
+            return "redirect:/course/getinfo.do";
+        }
+        else {
+            return "error";
+        }
     }
 
     @RequestMapping("/delete.do")
     public String doDelete(String courseName){
-        courseService.deleteCourseInfo(courseName);
-        return "redirect:/course/getinfo.do";
+        if(courseService.deleteCourseInfo(courseName)) {
+            return "redirect:/course/getinfo.do";
+        }
+        else {
+            return "error";
+        }
     }
 
     @RequestMapping("/getinfo.do")

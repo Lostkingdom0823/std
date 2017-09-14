@@ -3,6 +3,7 @@
 <%@ page import="java.util.ArrayList" %>
 <%@ page import="com.biz.std.model.CourseOffered" %>
 <%@ page import="com.biz.std.model.CourseSelected" %>
+<%@ page import="com.biz.std.util.HostLink" %>
 
 
 <%@page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
@@ -42,6 +43,7 @@
     List<CourseSelected> coursesSelected = new ArrayList<>();
     Integer count = 0;
     String studentId = null;
+    HostLink hostLink = new HostLink();
 %>
 
 <div id="navbar" class="navbar navbar-default ace-save-state">
@@ -371,19 +373,19 @@
     <div id="sidebar" class="sidebar responsive ace-save-state" data-sidebar="true" data-sidebar-scroll="true" data-sidebar-hover="true">
         <ul class="nav nav-list" style="top: 0px;">
             <li class="">
-                <a href="http://localhost:8585/std/student/getinfo.do">
+                <a href="http://<%=hostLink.getHostIp()%>:<%=hostLink.getHostPost()%>/std/student/getinfo.do">
                     <i class="menu-icon fa fa-user-o"></i>
                     Students
                 </a>
             </li>
             <li class="">
-                <a href="http://localhost:8585/std/grade/getinfo.do">
+                <a href="http://<%=hostLink.getHostIp()%>:<%=hostLink.getHostPost()%>/std/grade/getinfo.do">
                     <i class="menu-icon fa fa-flag"></i>
                     Grade
                 </a>
             </li>
             <li class="">
-                <a href="http://localhost:8585/std/course/getinfo.do">
+                <a href="http://<%=hostLink.getHostIp()%>:<%=hostLink.getHostPost()%>/std/course/getinfo.do">
                     <i class="menu-icon fa fa-book"></i>
                     Course
                 </a>
@@ -399,7 +401,7 @@
                         Tables
                         <small>
                             <i class="ace-icon fa fa-angle-double-right"></i>
-                            Static &amp; Dynamic Tables
+                            Score Info Table
                         </small>
                     </h1>
                 </div><!-- /.page-header -->
@@ -462,13 +464,13 @@
                         Form
                         <small>
                             <i class="ace-icon fa fa-angle-double-right"></i>
-                            Static &amp; Dynamic Tables
+                            Score Info Form
                         </small>
                     </h1>
                 </div><!-- /.page-header -->
                 <div class="row">
                     <!--todo-->
-                    <form class="form-horizontal" id="form" action="http://localhost:8585/std/student/changescore.do" method="post">
+                    <form class="form-horizontal" id="form" action="http://<%=hostLink.getHostIp()%>:<%=hostLink.getHostPost()%>/std/student/changescore.do" method="post">
                         <div class="form-group">
                             <label class="col-sm-3 control-label no-padding-right" >Course Score</label>
                             <div class="col-sm-9">
@@ -536,7 +538,7 @@
         // todo 完成前台逻辑
         //返回学生信息
         $("#backToStudentInfo").click(function () {
-            window.location.href="http://localhost:8585/std/student/getinfo.do";
+            window.location.href="http://<%=hostLink.getHostIp()%>:<%=hostLink.getHostPost()%>/std/student/getinfo.do";
         });
 
         //进入修改页面
@@ -546,14 +548,14 @@
             $("#formContent").show();
             $("#courseName").val($course.eq(1).html())
             $("#courseScore").val($course.eq(2).html());
-            $("#form").attr("action","http://localhost:8585/std/student/changescore.do");
+            $("#form").attr("action","http://<%=hostLink.getHostIp()%>:<%=hostLink.getHostPost()%>/std/student/changescore.do");
         });
 
         //分页js
         $("a[value$='pages']").click(function(){
             var $contentPage = $(this).html();
             var timeStamp=new Date().getTime();
-            var url = "http://localhost:8585/std/subject/getinfo.do?contentPage="+$contentPage+"&timestamp="+timeStamp;
+            var url = "http://<%=hostLink.getHostIp()%>:<%=hostLink.getHostPost()%>/std/subject/getinfo.do?contentPage="+$contentPage+"&timestamp="+timeStamp;
             $(this).attr("href",url);
         });
 

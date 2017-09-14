@@ -3,6 +3,7 @@
 <%@ page import="java.util.ArrayList" %>
 <%@ page import="com.biz.std.model.CourseOffered" %>
 <%@ page import="com.biz.std.model.CourseSelected" %>
+<%@ page import="com.biz.std.util.HostLink" %>
 
 
 <%@page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
@@ -46,6 +47,7 @@
     Integer count = 0;
     Integer totalDetails = 0;
     String studentId = null;
+    HostLink hostLink = new HostLink();
 %>
 
 <div id="navbar" class="navbar navbar-default ace-save-state">
@@ -375,19 +377,19 @@
     <div id="sidebar" class="sidebar responsive ace-save-state" data-sidebar="true" data-sidebar-scroll="true" data-sidebar-hover="true">
         <ul class="nav nav-list" style="top: 0px;">
             <li class="">
-                <a href="http://localhost:8585/std/student/getinfo.do">
+                <a href="http://<%=hostLink.getHostIp()%>:<%=hostLink.getHostPost()%>/std/student/getinfo.do">
                     <i class="menu-icon fa fa-user-o"></i>
                     Students
                 </a>
             </li>
             <li class="">
-                <a href="http://localhost:8585/std/grade/getinfo.do">
+                <a href="http://<%=hostLink.getHostIp()%>:<%=hostLink.getHostPost()%>/std/grade/getinfo.do">
                     <i class="menu-icon fa fa-flag"></i>
                     Grade
                 </a>
             </li>
             <li class="">
-                <a href="http://localhost:8585/std/course/getinfo.do">
+                <a href="http://<%=hostLink.getHostIp()%>:<%=hostLink.getHostPost()%>/std/course/getinfo.do">
                     <i class="menu-icon fa fa-book"></i>
                     Course
                 </a>
@@ -403,7 +405,7 @@
                         Tables
                         <small>
                             <i class="ace-icon fa fa-angle-double-right"></i>
-                            Static &amp; Dynamic Tables
+                            Select Course Table
                         </small>
                     </h1>
                 </div><!-- /.page-header -->
@@ -561,14 +563,14 @@
         // todo 完成前台逻辑
 
         $("#backToStudentInfo").click(function () {
-            window.location.href="http://localhost:8585/std/student/getinfo.do";
+            window.location.href="http://<%=hostLink.getHostIp()%>:<%=hostLink.getHostPost()%>/std/student/getinfo.do";
         });
 
         //选课
         $(".btn-info").click(function(){
             $courseName = $(this).parent().parent().parent().find('td').eq(2).html();
             if(confirm("confirm to study this course?")){
-                window.location.href="http://localhost:8585/std/student/selectcourse.do?studentId=<%=studentId%>&courseName="+$courseName;
+                window.location.href="http://<%=hostLink.getHostIp()%>:<%=hostLink.getHostPost()%>/std/student/selectcourse.do?studentId=<%=studentId%>&courseName="+$courseName;
             }
         });
 
@@ -576,14 +578,14 @@
         $(".btn-danger").click(function () {
             var $course = $(this).parent().parent().parent().find('td').eq(2).html();
             if(confirm("confirm to abandon this course?")){
-                window.location.href="http://localhost:8585/std/student/abandoncourse.do?studentId=<%=studentId%>&courseName="+$course;
+                window.location.href="http://<%=hostLink.getHostIp()%>:<%=hostLink.getHostPost()%>/std/student/abandoncourse.do?studentId=<%=studentId%>&courseName="+$course;
             }
         });
         //分页js
         $("a[value$='pages']").click(function(){
             var $contentPage = $(this).html();
             var timeStamp=new Date().getTime();
-            var url = "http://localhost:8585/std/subject/getinfo.do?contentPage="+$contentPage+"&timestamp="+timeStamp;
+            var url = "http://<%=hostLink.getHostIp()%>:<%=hostLink.getHostPost()%>/std/subject/getinfo.do?contentPage="+$contentPage+"&timestamp="+timeStamp;
             $(this).attr("href",url);
         });
     });

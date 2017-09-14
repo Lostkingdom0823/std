@@ -33,6 +33,7 @@
 	<mvc:annotation-driven />
 
 	<!-- 静态资源处理，css,js,imgs -->
+	<mvc:resources mapping="/assets/**" location="/assets/"/>
 	<mvc:resources mapping="/student/assets/**" location="/assets/"/>
 	<mvc:resources mapping="/grade/assets/**" location="/assets/"/>
 	<mvc:resources mapping="/course/assets/**" location="/assets/"/>

@@ -1,6 +1,8 @@
 package com.biz.std.repository;
 
 import com.biz.std.model.CourseSelected;
+import com.biz.std.model.Grade;
+import com.biz.std.model.Student;
 import com.biz.std.service.CourseService;
 import com.biz.std.service.StudentService;
 import org.junit.After;
@@ -21,6 +23,7 @@ public class SpringDataTest {
     private CourseOfferedRepository courseOfferedRepository = null;
     private StudentService studentService = null;
     private CourseService courseService = null;
+    private GradeRepository gradeRepository = null;
 
     @Before
     public void setup() {
@@ -30,6 +33,7 @@ public class SpringDataTest {
         courseOfferedRepository = context.getBean(CourseOfferedRepository.class);
         studentService = context.getBean(StudentService.class);
         courseService = context.getBean(CourseService.class);
+        gradeRepository = context.getBean(GradeRepository.class);
         System.out.println("setup");
     }
 
@@ -45,48 +49,16 @@ public class SpringDataTest {
     }
 
     @Test
-    public void testStudentCourseSave(){
-        studentService.selectCourse("111","Chemistry");
-    }
-
-    @Test
-    public void testAbandonCourses(){
-        studentService.abandonCourse("111","Chemistry");
-    }
-
-    @Test
-    public void testFindCourseByStudentId(){
-        List<CourseSelected> courseSelectedList = courseSelectedRepository.findCourseByStudentId("111");
-        Iterator<CourseSelected> iterator = courseSelectedList.iterator();
-        while(iterator.hasNext()){
-            System.out.println(iterator.next().getCourseName());
+    public void testFindStudentInfo(){
+        List<Student> students = gradeRepository.findStudentInfo("Grade 1 Class 1");
+        for(Student student : students){
+            System.out.println(student.getStudentGrade().getGradeName());
         }
     }
 
     @Test
-    public void testFindStudentGradeByStudentId(){
-        System.out.println(studentRepository.getStudentGradeByStudentId("111"));
-    }
-
-    @Test
-    public void testGetAvgScoreByStudentId(){
-        System.out.println(courseSelectedRepository.getAvgScoresAndCount("1111").split(",")[1]);
-    }
-
-    @Test
-    public void testGetNumberOfStudentByStudentGrade(){
-        System.out.println(studentRepository.findStudentsByGradeName("Grade 1 Class 1"));
-    }
-
-    @Test
-    public void testGetNameAndId(){
-        List<String> courseSelecteds = courseSelectedRepository.findStudentIdsByCourseName("Math");
-        System.out .println(courseSelecteds.size());
-        System.out.println(courseSelecteds.get(0));
-    }
-
-    @Test
-    public void testUpdateCourse(){
-        courseService.updateCourseInfo("Math","TEST");
+    public void testFindStudentInfo1(){
+        Grade grade = studentRepository.getStudentGradeInfo("1111");
+        System.out.println(grade.getGradeAvgScore());
     }
 }

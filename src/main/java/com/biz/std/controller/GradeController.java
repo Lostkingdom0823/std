@@ -20,14 +20,20 @@ public class GradeController {
 
     @RequestMapping(value="/insert.do")
     public String doInsert(Grade grade){
-        gradeService.insertGradeInfo(grade);
-        return "redirect:/grade/getinfo.do";
+        if(gradeService.insertGradeInfo(grade)) {
+            return "redirect:/grade/getinfo.do";
+        }else{
+            return "error";
+        }
     }
 
     @RequestMapping("/delete.do")
     public String doDelete(Grade grade){
-        gradeService.deleteGradeInfo(grade);
-        return "redirect:/grade/getinfo.do";
+        if(gradeService.deleteGradeInfo(grade)) {
+            return "redirect:/grade/getinfo.do";
+        }else {
+            return "error";
+        }
     }
 
     @RequestMapping("/getinfo.do")

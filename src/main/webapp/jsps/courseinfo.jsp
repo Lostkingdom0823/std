@@ -2,6 +2,7 @@
 <%@ page import="java.util.Iterator" %>
 <%@ page import="java.util.ArrayList" %>
 <%@ page import="com.biz.std.model.CourseOffered" %>
+<%@ page import="com.biz.std.util.HostLink" %>
 <%--
   Created by IntelliJ IDEA.
   User: King
@@ -54,6 +55,7 @@
     Integer maxPage = 1;
     Integer count = 0;
     Integer totalDetails = 0;
+    HostLink hostLink = new HostLink();
 %>
 
 <div id="navbar" class="navbar navbar-default ace-save-state">
@@ -383,19 +385,19 @@
     <div id="sidebar" class="sidebar responsive ace-save-state" data-sidebar="true" data-sidebar-scroll="true" data-sidebar-hover="true">
         <ul class="nav nav-list" style="top: 0px;">
             <li class="">
-                <a href="http://localhost:8585/std/student/getinfo.do">
+                <a href="http://<%=hostLink.getHostIp()%>:<%=hostLink.getHostPost()%>/std/student/getinfo.do">
                     <i class="menu-icon fa fa-user-o"></i>
                     Students
                 </a>
             </li>
             <li class="">
-                <a href="http://localhost:8585/std/grade/getinfo.do">
+                <a href="http://<%=hostLink.getHostIp()%>:<%=hostLink.getHostPost()%>/std/grade/getinfo.do">
                     <i class="menu-icon fa fa-flag"></i>
                     Grade
                 </a>
             </li>
             <li class="">
-                <a href="http://localhost:8585/std/course/getinfo.do">
+                <a href="http://<%=hostLink.getHostIp()%>:<%=hostLink.getHostPost()%>/std/course/getinfo.do">
                     <i class="menu-icon fa fa-book"></i>
                     Course
                 </a>
@@ -411,7 +413,7 @@
                         Tables
                         <small>
                             <i class="ace-icon fa fa-angle-double-right"></i>
-                            Static &amp; Dynamic Tables
+                            Course Info Table
                         </small>
                     </h1>
                 </div><!-- /.page-header -->
@@ -551,12 +553,12 @@
                         Form
                         <small>
                             <i class="ace-icon fa fa-angle-double-right"></i>
-                            Static &amp; Dynamic Tables
+                            Course Info Form
                         </small>
                     </h1>
                 </div><!-- /.page-header -->
                 <div class="row">
-                    <form class="form-horizontal" id="form" action="http://localhost:8585/std/course/insert.do" method="post">
+                    <form class="form-horizontal" id="form" action="http://<%=hostLink.getHostIp()%>:<%=hostLink.getHostPost()%>/std/course/insert.do" method="post">
                         <input type="hidden" name = "oldCourseName" id = "oldCourseName"/>
                         <div class="form-group">
                             <label class="col-sm-3 control-label no-padding-right"> Course Name </label>
@@ -623,7 +625,7 @@
         $("#newInfo").click(function(){
             $("#infoContent").hide();
             $("#formContent").show();
-            $("#form").attr("action","http://localhost:8585/std/course/insert.do");
+            $("#form").attr("action","http://<%=hostLink.getHostIp()%>:<%=hostLink.getHostPost()%>/std/course/insert.do");
         });
 
         $("#return").click(function(){
@@ -638,20 +640,20 @@
             $("#formContent").show();
             $("#oldCourseName").val($course.eq(1).html());
             $("#courseName").val($course.eq(1).html());
-            $("#form").attr("action","http://localhost:8585/std/course/update.do");
+            $("#form").attr("action","http://<%=hostLink.getHostIp()%>:<%=hostLink.getHostPost()%>/std/course/update.do");
         });
 
         $(".btn-danger").click(function () {
             var $course = $(this).parent().parent().parent().find('td');
             if(confirm("是否删除该数据？")){
-                window.location.href="http://localhost:8585/std/course/delete.do?courseName="+$course.eq(1).html();
+                window.location.href="http://<%=hostLink.getHostIp()%>:<%=hostLink.getHostPost()%>/std/course/delete.do?courseName="+$course.eq(1).html();
             }
         });
 
         $("a[value$='pages']").click(function(){
             var $contentPage = $(this).html();
             var timeStamp=new Date().getTime();
-            var url = "http://localhost:8585/std/course/getinfo.do?contentPage="+$contentPage+"&timestamp="+timeStamp;
+            var url = "http://<%=hostLink.getHostIp()%>:<%=hostLink.getHostPost()%>/std/course/getinfo.do?contentPage="+$contentPage+"&timestamp="+timeStamp;
             $(this).attr("href",url);
         });
 
