@@ -2,6 +2,7 @@
 <%@ page import="com.biz.std.model.Student" %>
 <%@ page import="java.util.Iterator" %>
 <%@ page import="java.util.ArrayList" %>
+<%@ page import="com.biz.std.util.HostLink" %>
 <%--
   Created by IntelliJ IDEA.
   User: King
@@ -55,6 +56,7 @@
     Integer maxPage = 1;
     Integer count = 0;
     Integer totalDetails = 0;
+    HostLink hostLink = new HostLink();
 %>
 
 <div id="navbar" class="navbar navbar-default ace-save-state">
@@ -384,19 +386,19 @@
     <div id="sidebar" class="sidebar responsive ace-save-state" data-sidebar="true" data-sidebar-scroll="true" data-sidebar-hover="true">
         <ul class="nav nav-list" style="top: 0px;">
             <li class="">
-                <a href="http://localhost:8585/std/student/getinfo.do">
+                <a href="http://<%=hostLink.getHostIp()%>:<%=hostLink.getHostPost()%>/std/student/getinfo.do">
                     <i class="menu-icon fa fa-user-o"></i>
                     Students
                 </a>
             </li>
             <li class="">
-                <a href="http://localhost:8585/std/grade/getinfo.do">
+                <a href="http://<%=hostLink.getHostIp()%>:<%=hostLink.getHostPost()%>/std/grade/getinfo.do">
                     <i class="menu-icon fa fa-flag"></i>
                     Grade
                 </a>
             </li>
             <li class="">
-                <a href="http://localhost:8585/std/course/getinfo.do">
+                <a href="http://<%=hostLink.getHostIp()%>:<%=hostLink.getHostPost()%>/std/course/getinfo.do">
                     <i class="menu-icon fa fa-book"></i>
                     Course
                 </a>
@@ -412,7 +414,7 @@
                         Tables
                         <small>
                             <i class="ace-icon fa fa-angle-double-right"></i>
-                            Static &amp; Dynamic Tables
+                            Student Info Table
                         </small>
                     </h1>
                 </div><!-- /.page-header -->
@@ -649,12 +651,12 @@
                         Form
                         <small>
                             <i class="ace-icon fa fa-angle-double-right"></i>
-                            Static &amp; Dynamic Tables
+                            Student Info Form
                         </small>
                     </h1>
                 </div><!-- /.page-header -->
 				<div class="row">
-					<form class="form-horizontal" id="form" role="form" enctype="multipart/form-data" action="http://localhost:8585/std/student/insert.do" method="post">
+					<form class="form-horizontal" id="form" role="form" enctype="multipart/form-data" action="http://<%=hostLink.getHostIp()%>:<%=hostLink.getHostPost()%>/std/student/insert.do" method="post">
                         <div class="form-group">
 							<label class="col-sm-3 control-label no-padding-right" for="studentId"> Student id </label>
 
@@ -790,7 +792,7 @@
         $("#newInfo").click(function(){
             $("#infoContent").hide();
             $("#formContent").show();
-            $("#form").attr("action","http://localhost:8585/std/student/insert.do");
+            $("#form").attr("action","http://<%=hostLink.getHostIp()%>:<%=hostLink.getHostPost()%>/std/student/insert.do");
         });
 
         $("#return").click(function(){
@@ -810,44 +812,57 @@
             $("#studentBirthday").val($student.eq(4).html());
             $student.eq(5).html()=="Male"?$("#genderMale").prop("checked",true):$("#genderFemale").prop("checked",true);
             $("#studentAvgScore").val($student.eq(7).html());
-            $("#form").attr("action","http://localhost:8585/std/student/update.do");
+            $("#form").attr("action","http://<%=hostLink.getHostIp()%>:<%=hostLink.getHostPost()%>/std/student/update.do");
         });
 
         $(".btn-danger").click(function () {
             var $studentId = $(this).parent().parent().parent().find('td').eq(2).html();
             if(confirm("是否删除该数据？")){
-                window.location.href="http://localhost:8585/std/student/delete.do?studentId="+$studentId;
+                window.location.href="http://<%=hostLink.getHostIp()%>:<%=hostLink.getHostPost()%>/std/student/delete.do?studentId="+$studentId;
             }
         });
 
         $("a[value$='pages']").click(function(){
             var $contentPage = $(this).html();
             var timeStamp=new Date().getTime();
-            var url = "http://localhost:8585/std/student/getinfo.do?contentPage="+$contentPage+"&timestamp="+timeStamp;
+            var url = "http://<%=hostLink.getHostIp()%>:<%=hostLink.getHostPost()%>/std/student/getinfo.do?contentPage="+$contentPage+"&timestamp="+timeStamp;
             $(this).attr("href",url);
         });
 
         $("#reset").click(function(){
            var studentId = $("#studentId").val();
-           console.log(studentId);
            var inputs = $("#form").find('input');
            var selects = $("#form").find('select');
-           console.log(inputs.size());
            inputs.each(function () {
                $(this).val("");
            });
            selects.each(function () {
-               $(this).val("");
+               $(this).val($(this).find("option").eq(0).html());
            });
-           console.log(studentId);
            $("#studentId").val(studentId);
         });
 
         $("#submit").click(function () {
-            var $className="Grade "+$("#grade").val()+" Class "+$("#class").val();
-            alert($("#studentId").val());
-            $("#studentClass").val($className.toString());
-            submit();
+            //todo
+            if($("#studentId").val()==null || $("#studentId").val()==""){
+                confirm("请填写学生ID");
+                return false;
+            }
+            else if($("#studentName").val()==""){
+                confirm("请填写学生姓名");
+                return false;
+            }
+            else if($("#grade").val()=="" || $("#class").val()==""){
+                confirm("请填写学生班级信息");
+                return false;
+            }
+            else {
+                if (confirm("确认提交学生数据？")) {
+                    var $className = "Grade " + $("#grade").val() + " Class " + $("#class").val();
+                    $("#studentClass").val($className.toString());
+                    $("#form").submit();
+            }
+            }
         });
 
         $('.show-details-btn').on('click', function(e) {
@@ -874,14 +889,14 @@
         $("a[value$='select']").click(function(){
 
             $studentId = $(this).parent().parent().find('td').eq(2).html();
-            $(this).attr("href","http://localhost:8585/std/student/getcourseinfo.do?studentId="+$studentId);
+            $(this).attr("href","http://<%=hostLink.getHostIp()%>:<%=hostLink.getHostPost()%>/std/student/getcourseinfo.do?studentId="+$studentId);
 
         });
 
         $("a[value$='score']").click(function(){
 
             $studentId = $(this).parent().parent().find('td').eq(2).html();
-            $(this).attr("href","http://localhost:8585/std/student/getscoreinfo.do?studentId="+$studentId);
+            $(this).attr("href","http://<%=hostLink.getHostIp()%>:<%=hostLink.getHostPost()%>/std/student/getscoreinfo.do?studentId="+$studentId);
 
         });
     });

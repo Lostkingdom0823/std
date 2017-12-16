@@ -76,46 +76,53 @@ public class CourseService {
     }
 
     public boolean updateCourseInfo(String oldCourseName,String newCourseName){
+        if(courseOfferedRepository.exists(oldCourseName)){
+            CourseOffered courseOffered = courseOfferedRepository.findOne(oldCourseName);
+            List<String> studentIds = courseSelectedRepository.findStudentIdsByCourseName(oldCourseName);
+            List<Student> students = new ArrayList<Student>();
 
-        CourseOffered courseOffered = courseOfferedRepository.findOne(oldCourseName);
-        List<String> studentIds = courseSelectedRepository.findStudentIdsByCourseName(oldCourseName);
-        List<Student> students = new ArrayList<Student>();
+            CourseOffered newCourseOffered = new CourseOffered();
+            newCourseOffered.setCourseName(newCourseName);
+            newCourseOffered.setAvgScore(courseOffered.getAvgScore());
+            newCourseOffered.setNumberOfStudents(courseOffered.getNumberOfStudents());
 
-        CourseOffered newCourseOffered = new CourseOffered();
-        newCourseOffered.setCourseName(newCourseName);
-        newCourseOffered.setAvgScore(courseOffered.getAvgScore());
-        newCourseOffered.setNumberOfStudents(courseOffered.getNumberOfStudents());
+            for(String studentId : studentIds){
+                Set<CourseSelected> courseSelectedSet = new HashSet<CourseSelected>();
+                Student student = studentRepository.findOne(studentId);
+                CourseSelected courseSelected = courseSelectedRepository.findOne(studentId+oldCourseName);
+                courseSelected.setCourseName(newCourseName);
+                courseSelected.setCourseId(studentId+newCourseName);
+                courseSelectedSet.add(courseSelected);
+                student.setCourses(courseSelectedSet);
+                students.add(student);
+            }
 
-        for(String studentId : studentIds){
-            Set<CourseSelected> courseSelectedSet = new HashSet<CourseSelected>();
-            Student student = studentRepository.findOne(studentId);
-            CourseSelected courseSelected = courseSelectedRepository.findOne(studentId+oldCourseName);
-            courseSelected.setCourseName(newCourseName);
-            courseSelected.setCourseId(studentId+newCourseName);
-            courseSelectedSet.add(courseSelected);
-            student.setCourses(courseSelectedSet);
-            students.add(student);
+            studentRepository.save(students);
+            courseSelectedRepository.deleteCourseSelectedByCourseName(oldCourseName);
+            courseOfferedRepository.save(newCourseOffered);
+
+            if(courseOfferedRepository.exists(newCourseName)){
+                courseOfferedRepository.delete(oldCourseName);
+            }
+            return true;
+        }else {
+            return false;
         }
-
-        studentRepository.save(students);
-        courseSelectedRepository.deleteCourseSelectedByCourseName(oldCourseName);
-        courseOfferedRepository.save(newCourseOffered);
-
-        if(courseOfferedRepository.exists(newCourseName)){
-            courseOfferedRepository.delete(oldCourseName);
-        }
-        return true;
     }
 
     public boolean deleteCourseInfo(String courseName){
-        List<String> studentIds = courseSelectedRepository.findStudentIdsByCourseName(courseName);
 
-        for(String studentId : studentIds){
-            studentService.abandonCourse(studentId,courseName);
+        if(courseOfferedRepository.exists(courseName)) {
+            List<String> studentIds = courseSelectedRepository.findStudentIdsByCourseName(courseName);
+
+            for (String studentId : studentIds) {
+                studentService.abandonCourse(studentId, courseName);
+            }
+
+            courseOfferedRepository.delete(courseName);
+            return true;
+        }else {
+            return false;
         }
-
-        courseOfferedRepository.delete(courseName);
-
-        return true;
     }
 }

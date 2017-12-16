@@ -25,18 +25,37 @@ public class GradeService {
     private GradeInfo gradeInfo;
 
     @Transactional
-    public void insertGradeInfo(Grade grade){
-        gradeRepository.save(grade);
+    public Boolean insertGradeInfo(Grade grade){
+        if(!gradeRepository.exists(grade.getGradeName())) {
+            grade.setNumberOfStudents(0);
+            grade.setGradeAvgScore(0F);
+            gradeRepository.save(grade);
+            return true;
+        }else{
+            return false;
+        }
     }
 
     @Transactional
-    public void updateGradeInfo(Grade grade){
-        gradeRepository.save(grade);
+    public Boolean updateGradeInfo(Grade grade){
+        if (gradeRepository.exists(grade.getGradeName())) {
+            Grade temp = gradeRepository.findOne(grade.getGradeName());
+            temp.setGradeName(grade.getGradeName());
+            gradeRepository.save(temp);
+            return true;
+        }else {
+            return false;
+        }
     }
 
     @Transactional
-    public void deleteGradeInfo(Grade grade){
-        gradeRepository.delete(grade.getGradeName());
+    public Boolean deleteGradeInfo(Grade grade){
+        if(gradeRepository.exists(grade.getGradeName())) {
+            gradeRepository.delete(grade.getGradeName());
+            return true;
+        }else {
+            return false;
+        }
 
     }
 

@@ -15,5 +15,7 @@ public interface StudentRepository extends PagingAndSortingRepository<Student,St
     @Query(value = "SELECT * FROM student where gradeName = ?1",nativeQuery = true)
     List<Student> findStudentsByGradeName(String studentGrade);
 
+    @Query(value = "select o from Grade o join o.students students where students.studentId = ?1")
+    Grade getStudentGradeInfo(String studentId);
 
 }

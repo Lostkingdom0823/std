@@ -2,6 +2,7 @@
 <%@ page import="java.util.Iterator" %>
 <%@ page import="java.util.ArrayList" %>
 <%@ page import="com.biz.std.model.Grade" %>
+<%@ page import="com.biz.std.util.HostLink" %>
 <%--
   Created by IntelliJ IDEA.
   User: King
@@ -49,6 +50,7 @@
     Integer maxPage = 1;
     Integer count = 0;
     Integer totalDetails = 0;
+    HostLink hostLink = new HostLink();
 %>
 
 <div id="navbar" class="navbar navbar-default ace-save-state">
@@ -378,19 +380,19 @@
     <div id="sidebar" class="sidebar responsive ace-save-state" data-sidebar="true" data-sidebar-scroll="true" data-sidebar-hover="true">
         <ul class="nav nav-list" style="top: 0px;">
             <li class="">
-                <a href="http://localhost:8585/std/student/getinfo.do">
+                <a href="http://<%=hostLink.getHostIp()%>:<%=hostLink.getHostPost()%>/std/student/getinfo.do">
                     <i class="menu-icon fa fa-user-o"></i>
                     Students
                 </a>
             </li>
             <li class="">
-                <a href="http://localhost:8585/std/grade/getinfo.do">
+                <a href="http://<%=hostLink.getHostIp()%>:<%=hostLink.getHostPost()%>/std/grade/getinfo.do">
                     <i class="menu-icon fa fa-flag"></i>
                     Grade
                 </a>
             </li>
             <li class="">
-                <a href="http://localhost:8585/std/course/getinfo.do">
+                <a href="http://<%=hostLink.getHostIp()%>:<%=hostLink.getHostPost()%>/std/course/getinfo.do">
                     <i class="menu-icon fa fa-book"></i>
                     Course
                 </a>
@@ -407,7 +409,7 @@
                         Tables
                         <small>
                             <i class="ace-icon fa fa-angle-double-right"></i>
-                            Static &amp; Dynamic Tables
+                            Grade Info Table
                         </small>
                     </h1>
                 </div><!-- /.page-header -->
@@ -553,13 +555,13 @@
                         Form
                         <small>
                             <i class="ace-icon fa fa-angle-double-right"></i>
-                            Static &amp; Dynamic Tables
+                            Grade Info Form
                         </small>
                     </h1>
                 </div><!-- /.page-header -->
                 <div class="row">
                     <!--todo-->
-                    <form class="form-horizontal" id="form" role="form" action="http://localhost:8585/std/grade/insert.do" method="post">
+                    <form class="form-horizontal" id="form" role="form" action="http://<%=hostLink.getHostIp()%>:<%=hostLink.getHostPost()%>/std/grade/insert.do" method="post">
                         <div class="form-group" id="insert">
                             <label class="col-sm-3 control-label no-padding-right" >Class name</label>
                             <span class="col-sm-1 label label-xlg label-white middle " style="margin-right:10px;margin-left:10px;margin-top:4px">Grade</span>
@@ -585,12 +587,6 @@
                                 </select>
                             </div>
                             <input type="hidden" name="gradeName" id="gradeName"/>
-                        </div>
-                        <div class="form-group" id="update">
-                            <label class="col-sm-3 control-label no-padding-right" >Class name</label>
-                            <div class="col-sm-9">
-                                <input type="text" id="gradeNameReadOnly" name="gradeName" placeholder="0" class="col-xs-10 col-sm-5" />
-                            </div>
                         </div>
                         <div class="clearfix form-actions">
                             <div class="col-md-offset-3 col-md-9">
@@ -652,7 +648,7 @@
             $("#insert").show();
             $("#update").hide();
             $("#form .col-sm-1").show();
-            $("#form").attr("action","http://localhost:8585/std/grade/insert.do");
+            $("#form").attr("action","http://<%=hostLink.getHostIp()%>:<%=hostLink.getHostPost()%>/std/grade/insert.do");
         });
 
         $("#return").click(function(){
@@ -665,33 +661,32 @@
             var $class = $(this).parent().parent().parent().find('td');
             $("#infoContent").hide();
             $("#formContent").show();
-            $("#insert").hide();
-            $("#update").show();
-            $("#gradeNameReadOnly").val($class.eq(1).html());
-            $("#gradeNameReadOnly").attr('readonly','readonly');
-            $("#numberOfStudents").val($class.eq(2).html());
-            $("#classAvgScore").val($class.eq(3).html());
-            $("#form").attr("action","http://localhost:8585/std/grade/update.do");
+            $("#form").attr("action","http://<%=hostLink.getHostIp()%>:<%=hostLink.getHostPost()%>/std/grade/update.do");
         });
 
         $(".btn-danger").click(function () {
             var $class = $(this).parent().parent().parent().find('td');
             if(confirm("是否删除该数据？")){
-                window.location.href="http://localhost:8585/std/grade/delete.do?gradeName="+$class.eq(1).html();
+                window.location.href="http://<%=hostLink.getHostIp()%>:<%=hostLink.getHostPost()%>/std/grade/delete.do?gradeName="+$class.eq(1).html();
             }
         });
         //分页js
         $("a[value$='pages']").click(function(){
             var $contentPage = $(this).html();
             var timeStamp=new Date().getTime();
-            var url = "http://localhost:8585/std/grade/getinfo.do?contentPage="+$contentPage+"&timestamp="+timeStamp;
+            var url = "http://<%=hostLink.getHostIp()%>:<%=hostLink.getHostPost()%>/std/grade/getinfo.do?contentPage="+$contentPage+"&timestamp="+timeStamp;
             $(this).attr("href",url);
         });
         //submit处理
         $("#submit").click(function () {
-            var $gradeName="Grade "+$("#grade").val()+" Class "+$("#class").val();
-            $("#gradeName").val($gradeName);
-            submit();
+            if(confirm("确认修改班级信息?")){
+                var $gradeName="Grade "+$("#grade").val()+" Class "+$("#class").val();
+                $("#gradeName").val($gradeName);
+                submit();
+            }
+            else {
+                return false;
+            }
         });
     });
 

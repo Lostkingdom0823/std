@@ -3,6 +3,7 @@ package com.biz.std.controller;
 import com.biz.std.model.Grade;
 import com.biz.std.model.Student;
 import com.biz.std.service.StudentService;
+import com.biz.std.vo.StudentInfo;
 import org.apache.commons.fileupload.*;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.fileupload.util.Streams;
@@ -22,8 +23,8 @@ public class StudentController {
 	
 	@Autowired
 	private StudentService studentService;
-	
-	@RequestMapping(value="/insert.do")
+
+    @RequestMapping(value="/insert.do")
 	public String doInsert(HttpServletRequest request) throws UnsupportedEncodingException {
         request.setCharacterEncoding("UTF-8");
         String studentImageUrl = null;
@@ -31,49 +32,31 @@ public class StudentController {
         if(ServletFileUpload.isMultipartContent(request)){
             ServletFileUpload upload = new ServletFileUpload();
             try {
-                FileItemIterator iter = upload.getItemIterator(request);
-                while (iter.hasNext()) {
-                    FileItemStream item = iter.next();
-                    String name = item.getFieldName();
-                    InputStream stream = item.openStream();
-                    if(item.isFormField()){
-                        studentInfo.put(name,Streams.asString(stream));
-                    }
-                    else if(!item.isFormField() && stream.available()!=0) {
-                        byte[] data = new byte[1024];
-                        int len = 0;
-                        FileOutputStream fileOutputStream = null;
-                        //绝对地址前缀
-                        String prefixUrl = "d://JAVA/std/src/main/webapp";
-                        //相对路径
-                        studentImageUrl = "/images/" + (int)Math.floor(Math.random() * 100 + 0.5)
-                                + "/student_" + new Date().getTime() + ".jpg";
-                        String fullUrl = prefixUrl+studentImageUrl;
-                        fileOutputStream = new FileOutputStream(fullUrl);
-                        while ((len = stream.read(data)) != -1) {
-                            fileOutputStream.write(data, 0, len);
-                        }
-                    }
-                }
+                putImage(upload,request,studentInfo,studentImageUrl);
+
                 Student student = new Student();
                 Grade grade = new Grade();
                 grade.setGradeName(studentInfo.get("studentClass"));
                 student.setStudentId(studentInfo.get("studentId"));
                 student.setStudentName(studentInfo.get("studentName"));
                 student.setStudentGrade(grade);
-                String[] time = studentInfo.get("studentBirthday").split("-");
-                student.setStudentBirthday(new java.sql.Date(Integer.parseInt(time[0])-1900,Integer.parseInt(time[1])-1,Integer.parseInt(time[2])));
+                if(!studentInfo.get("studentBirthday").equals("")) {
+                    String[] time = studentInfo.get("studentBirthday").split("-");
+                    student.setStudentBirthday(new java.sql.Date(Integer.parseInt(time[0]) - 1900, Integer.parseInt(time[1]) - 1, Integer.parseInt(time[2])));
+                }
                 student.setStudentSex(studentInfo.get("studentSex"));
                 student.setStudentImageUrl(studentImageUrl);
-                studentService.insertStudentInfo(student);
-                return "redirect:/student/getinfo.do";
+                if(studentService.insertStudentInfo(student)){
+                    return "redirect:/student/getinfo.do";
+                }
+                return "error";
             }catch (Exception e){
                 e.printStackTrace();
-                return "";
+                return "error";
             }
         }
         else {
-            return "";
+            return "error";
         }
 	}
 
@@ -85,31 +68,8 @@ public class StudentController {
         if(ServletFileUpload.isMultipartContent(request)){
             ServletFileUpload upload = new ServletFileUpload();
             try {
-                FileItemIterator iter = upload.getItemIterator(request);
-                while (iter.hasNext()) {
-                    FileItemStream item = iter.next();
-                    String name = item.getFieldName();
-                    InputStream stream = item.openStream();
-                    if(item.isFormField()){
-                        studentInfo.put(name,Streams.asString(stream));
-                    }
-                    //// TODO: 2017/8/8   寻找合适的方法将图片处理放入service完成
-                    else if(!item.isFormField() && stream.available()!=0) {
-                        byte[] data = new byte[1024];
-                        int len = 0;
-                        FileOutputStream fileOutputStream = null;
-                        //绝对地址前缀
-                        String prefixUrl = "d://JAVA/std/src/main/webapp";
-                        //相对路径
-                        studentImageUrl = "/images/" + (int)Math.floor(Math.random() * 100 + 0.5)
-                                + "/student_" + new Date().getTime() + ".jpg";
-                        String fullUrl = prefixUrl+studentImageUrl;
-                        fileOutputStream = new FileOutputStream(fullUrl);
-                        while ((len = stream.read(data)) != -1) {
-                            fileOutputStream.write(data, 0, len);
-                        }
-                    }
-                }
+                studentImageUrl = putImage(upload,request,studentInfo,studentImageUrl);
+
                 Student student = new Student();
                 Grade grade = new Grade();
                 grade.setGradeName(studentInfo.get("studentClass"));
@@ -125,22 +85,25 @@ public class StudentController {
                     return "redirect:/student/getinfo.do";
                 }
                 else {
-                    return "";
+                    return "error";
                 }
             }catch (Exception e){
                 e.printStackTrace();
-                return "";
+                return "error";
             }
         }
         else {
-            return "";
+            return "error";
         }
     }
 
 	@RequestMapping("/delete.do")
 	public String doDelete(String studentId){
-		studentService.deleteStudentInfo(studentId);
-		return "redirect:/student/getinfo.do";
+		if(studentService.deleteStudentInfo(studentId)) {
+            return "redirect:/student/getinfo.do";
+        }
+        else
+            return "error";
 	}
 	
 	@RequestMapping("/getinfo.do")
@@ -156,26 +119,36 @@ public class StudentController {
             return studentService.getCourseInfo(contentPage, size, studentId);
         }
         else{
-	        return null;
+	        ModelAndView modelAndView = new ModelAndView();
+	        modelAndView.setViewName("error");
+	        return modelAndView;
         }
     }
 
     @RequestMapping("/selectcourse.do")
     public String doSelectCourse(String studentId,String courseName){
         if(studentId!=null){
-        studentService.selectCourse(studentId,courseName);
-            return "redirect:/student/getcourseinfo.do?studentId="+studentId;
+            if(studentService.selectCourse(studentId,courseName)) {
+                return "redirect:/student/getcourseinfo.do?studentId=" + studentId;
+            }
+            else {
+                return "error";
+            }
         }
         else {
-            return "";
+            return "error";
         }
 
     }
 
     @RequestMapping("/abandoncourse.do")
     public String doAbandonCourse(String studentId,String courseName){
-        studentService.abandonCourse(studentId,courseName);
-        return "redirect:/student/getcourseinfo.do?studentId="+studentId;
+        if(studentService.abandonCourse(studentId,courseName)) {
+            return "redirect:/student/getcourseinfo.do?studentId=" + studentId;
+        }
+        else {
+            return "error";
+        }
     }
 
     @RequestMapping("/getscoreinfo.do")
@@ -184,13 +157,49 @@ public class StudentController {
             return studentService.getStudentScoreInfo(studentId);
         }
         else {
-            return null;
+            ModelAndView modelAndView = new ModelAndView();
+            modelAndView.setViewName("error");
+            return modelAndView;
         }
     }
 
     @RequestMapping("/changescore.do")
     public String doChangeScore(String studentId,String courseName,Float courseScore){
-        studentService.updateStudentScoreInfo(studentId,courseName,courseScore);
-        return "redirect:/student/getscoreinfo.do?studentId="+studentId;
+        if(studentService.updateStudentScoreInfo(studentId,courseName,courseScore)) {
+            return "redirect:/student/getscoreinfo.do?studentId=" + studentId;
+        }
+        else {
+            return "error";
+        }
+    }
+
+    private String putImage(ServletFileUpload upload,HttpServletRequest request, Map<String,String> studentInfo,String studentImageUrl) throws IOException, FileUploadException {
+        FileItemIterator iter = upload.getItemIterator(request);
+        while (iter.hasNext()) {
+            FileItemStream item = iter.next();
+            String name = item.getFieldName();
+            InputStream stream = item.openStream();
+            if(item.isFormField()){
+                studentInfo.put(name,Streams.asString(stream));
+            }
+            else if(!item.isFormField() && stream.available()!=0) {
+                byte[] data = new byte[1024];
+                int len = 0;
+                FileOutputStream fileOutputStream = null;
+                //绝对地址前缀
+                String prefixUrl = "d://JAVA/std/src/main/webapp";
+                //相对路径
+                studentImageUrl = "/images/" + (int)Math.floor(Math.random() * 100 + 0.5)
+                        + "/student_" + new Date().getTime() + ".jpg";
+                String fullUrl = prefixUrl+studentImageUrl;
+                fileOutputStream = new FileOutputStream(fullUrl);
+                while ((len = stream.read(data)) != -1) {
+                    fileOutputStream.write(data, 0, len);
+                }
+                stream.close();
+                fileOutputStream.close();
+            }
+        }
+        return studentImageUrl;
     }
 }
