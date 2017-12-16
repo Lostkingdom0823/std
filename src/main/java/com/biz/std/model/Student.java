@@ -14,7 +14,7 @@ public class Student {
 	private String studentSex;
 	private Float avgScore;
 	private String studentImageUrl;
-	private Set<CourseSelected> Courses;
+	private Set<CourseSelected> courses;
 	private Integer numberOfCourses;
 
 	@Id
@@ -75,11 +75,11 @@ public class Student {
 
 	@OneToMany(cascade = CascadeType.ALL,mappedBy = "student")
 	public Set<CourseSelected> getCourses() {
-		return Courses;
+		return courses;
 	}
 
 	public void setCourses(Set<CourseSelected> courses) {
-		Courses = courses;
+		this.courses = courses;
 	}
 	
 	@Column(columnDefinition = "float default 0.0")
@@ -97,5 +97,20 @@ public class Student {
 
 	public void setNumberOfCourses(Integer numberOfCourses) {
 		this.numberOfCourses = numberOfCourses;
+	}
+
+	@Override
+	public String toString() {
+		return "Student{" +
+				"studentId='" + studentId + '\'' +
+				", studentName='" + studentName + '\'' +
+				", studentGrade=" + studentGrade +
+				", studentBirthday=" + studentBirthday +
+				", studentSex='" + studentSex + '\'' +
+				", avgScore=" + avgScore +
+				", studentImageUrl='" + studentImageUrl + '\'' +
+				", courses=" + courses +
+				", numberOfCourses=" + numberOfCourses +
+				'}';
 	}
 }

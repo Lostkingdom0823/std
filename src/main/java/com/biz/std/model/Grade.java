@@ -52,4 +52,14 @@ public class Grade {
     public Grade(){
 
     }
+
+    @Override
+    public String toString() {
+        return "Grade{" +
+                "gradeName='" + gradeName + '\'' +
+                ", numberOfStudents=" + numberOfStudents +
+                ", gradeAvgScore=" + gradeAvgScore +
+                ", students=" + students +
+                '}';
+    }
 }
