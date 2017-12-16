@@ -5,8 +5,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class HostLink {
 
-    private  String hostIp="119.23.32.233";
-    private  String hostPost="8888";
+    private  String hostIp="127.0.0.1";
+    private  String hostPost="8585";
     private  String prefixUrl = "/usr/local/tomcat/webapps/std";
 
     public String getHostIp() {
